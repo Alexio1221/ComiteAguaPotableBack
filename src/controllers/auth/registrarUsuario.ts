@@ -1,5 +1,4 @@
-// src/controllers/auth/registrarPersona.ts
-
+// src/controllers/auth/registrarUsuario.ts
 import prisma from '../../config/client';
 import bcrypt from 'bcryptjs';
 import { Request, Response } from 'express';
