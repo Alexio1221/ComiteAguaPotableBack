@@ -41,10 +41,16 @@ export const iniciarSesion = async (req: Request<{}, any, LoginBody>, res: Respo
       usuario: usuarioEncontrado.usuario
     });
 
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // solo HTTPS en producción
+      sameSite: 'lax', // protección CSRF básica
+      maxAge: 12 * 60 * 60 * 1000, // 12 horas en ms
+    });
+
     res.status(200).json({
       mensaje: 'Inicio de sesión exitoso ✅',
       usuario: usuarioEncontrado.usuario,
-      token
     });
 
   } catch (error) {
