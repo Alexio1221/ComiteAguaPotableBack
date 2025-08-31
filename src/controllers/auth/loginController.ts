@@ -18,9 +18,18 @@ export const iniciarSesion = async (req: Request<{}, any, LoginBody>, res: Respo
       return;
     }
 
+    // Buscar usuario con roles y funciones
     const usuarioEncontrado = await prisma.usuario.findUnique({
-      where: {
-        usuario: usuario.trim().toLowerCase()
+      where: { usuario: usuario.trim().toLowerCase() },
+      include: {
+        roles: {
+          where: {estado: true},
+          include: {
+            rol: {
+              include: { funciones: true }
+            }
+          }
+        }
       }
     });
 
@@ -36,21 +45,39 @@ export const iniciarSesion = async (req: Request<{}, any, LoginBody>, res: Respo
       return;
     }
 
+    // Generar token JWT
     const token = generarToken({
-      id: usuarioEncontrado.id,
+      id: usuarioEncontrado.idUsuario,
       usuario: usuarioEncontrado.usuario
     });
 
+    // Configurar cookie
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // solo HTTPS en producción
-      sameSite: 'lax', // protección CSRF básica
-      maxAge: 12 * 60 * 60 * 1000, // 12 horas en ms
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 12 * 60 * 60 * 1000, // 12 horas
     });
 
+    // Formatear roles con funciones
+    const rolesFormateados = usuarioEncontrado.roles.map((ur) => ({
+      nombreRol: ur.rol.nombreRol,
+      funciones: ur.rol.funciones.map(f => ({
+        nombreFuncion: f.nombreFuncion,
+        icono: f.icono
+      }))
+    }));
+
+    // Respuesta final
     res.status(200).json({
-      mensaje: 'Inicio de sesión exitoso ✅',
-      usuario: usuarioEncontrado.usuario,
+      mensaje: 'Inicio de sesión exitoso',
+      usuario: {
+        idUsuario: usuarioEncontrado.idUsuario,
+        usuario: usuarioEncontrado.usuario,
+        nombre: usuarioEncontrado.nombre,
+        apellido: usuarioEncontrado.apellido,
+        roles: rolesFormateados
+      }
     });
 
   } catch (error) {
