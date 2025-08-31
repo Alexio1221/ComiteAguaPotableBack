@@ -6,6 +6,8 @@ import { Request, Response } from 'express';
 // Interfaz para el body del request
 interface RegistroBody {
   nombre: string;
+  apellido: string;
+  telefono: string;
   usuario: string;
   contraseña: string;
 }
@@ -44,10 +46,10 @@ const validarUsuario = (usuario: string): { valido: boolean; mensaje?: string } 
 
 export const registrarUsuario = async (req: Request<{}, any, RegistroBody>, res: Response): Promise<void> => {
   try {
-    const { nombre, usuario, contraseña } = req.body;
+    const { nombre, apellido, telefono, usuario, contraseña } = req.body;
 
     // Validaciones de campos obligatorios
-    if (!nombre || !usuario || !contraseña) {
+    if (!nombre || !apellido || !telefono || !usuario || !contraseña) {
       res.status(400).json({
         error: 'CAMPOS_REQUERIDOS',
         mensaje: 'Todos los campos son obligatorios.'
@@ -55,10 +57,19 @@ export const registrarUsuario = async (req: Request<{}, any, RegistroBody>, res:
       return;
     }
     // Validar longitud del nombre
-    if (nombre.trim().length < 2 || nombre.trim().length > 50) {
+    if ((nombre.trim().length < 2 || nombre.trim().length > 50) || (apellido.trim().length < 2 || apellido.trim().length > 50)) {
       res.status(400).json({
-        error: 'NOMBRE_INVALIDO',
-        mensaje: 'El nombre debe tener entre 2 y 50 caracteres.'
+        error: 'NOMBRE_O_APELLIDO_INVALIDO',
+        mensaje: 'El nombre y apellido debe tener entre 2 y 50 caracteres.'
+      });
+      return;
+    }
+
+    // Validar Telefono
+    if (!/^\d{7,15}$/.test(telefono)) {
+      res.status(400).json({
+        error: 'TELEFONO_INVALIDO',
+        mensaje: 'El teléfono debe contener solo números y tener entre 7 y 15 dígitos.'
       });
       return;
     }
@@ -103,6 +114,8 @@ export const registrarUsuario = async (req: Request<{}, any, RegistroBody>, res:
     const nuevoUsuario = await prisma.usuario.create({
       data: {
         nombre: nombre.trim(),
+        apellido: apellido.trim(),
+        telefono: telefono.trim(),
         usuario: usuario.trim().toLowerCase(),
         contraseña: contraseñaHash,
       },

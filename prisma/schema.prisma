@@ -8,11 +8,42 @@ datasource db {
 }
 
 model Usuario {
-  id         Int      @id @default(autoincrement())
+  idUsuario  Int      @id @default(autoincrement())
   nombre     String
+  apellido   String
+  telefono   String
   usuario    String   @unique
   contraseña String
-  creado_en  DateTime @default(now())
+  creadoEn   DateTime @default(now())
+  modificadoEn DateTime @updatedAt
+  roles  UsuarioRol[]
+}
+
+model Rol {
+  idRol       Int @id @default(autoincrement())
+  nombreRol   String
+  descripcion String @db.Text
+  usuarios    UsuarioRol[]
+  funciones   Funcion[]
+}
+
+model UsuarioRol {
+  idUsuario     Int
+  idRol         Int
+  estado        Boolean @default(true)
+  fechaCreacion DateTime @default(now())
+  fechaModificacion DateTime @updatedAt
+  usuario        Usuario @relation(fields: [idUsuario], references: [idUsuario])
+  rol            Rol @relation(fields: [idRol], references: [idRol])
+  @@id([idUsuario, idRol])
+}
+
+model Funcion {
+  idFuncion      Int @id @default(autoincrement())
+  idRol          Int
+  nombreFuncion  String
+  icono          String
+  rol            Rol @relation(fields: [idRol], references: [idRol])
 }
 
 

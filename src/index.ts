@@ -21,6 +21,11 @@ app.get('/', (_req, res) => {
   res.send('Servidor corriendo 🎉');
 });
 
+/*Local*/ 
 app.listen(PORT, () => {
   console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });
+/*Network
+app.listen(5000, "0.0.0.0", () => {
+  console.log("Servidor escuchando en http://0.0.0.0:5000");
+});*/
