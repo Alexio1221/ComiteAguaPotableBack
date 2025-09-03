@@ -17,6 +17,7 @@ model Usuario {
   creadoEn   DateTime @default(now())
   modificadoEn DateTime @updatedAt
   roles  UsuarioRol[]
+  sesiones      Sesion[]
 }
 
 model Rol {
@@ -46,4 +47,13 @@ model Funcion {
   rol            Rol @relation(fields: [idRol], references: [idRol])
 }
 
-
+model Sesion {
+  idSesion   Int      @id @default(autoincrement())
+  idUsuario  Int
+  usuario    Usuario  @relation(fields: [idUsuario], references: [idUsuario])
+  rolActual  String   
+  tokenSesion  String   
+  estado        Boolean @default(true)
+  creadoEn   DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+}

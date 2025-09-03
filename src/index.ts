@@ -12,7 +12,7 @@ app.use(cors({
   credentials: true, // necesario para enviar y recibir cookies
 }));
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 5000;
 app.use(express.json());
 
 app.use('/auth', usuarios);

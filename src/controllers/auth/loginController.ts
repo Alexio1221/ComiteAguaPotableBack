@@ -23,12 +23,7 @@ export const iniciarSesion = async (req: Request<{}, any, LoginBody>, res: Respo
       where: { usuario: usuario.trim().toLowerCase() },
       include: {
         roles: {
-          where: {estado: true},
-          include: {
-            rol: {
-              include: { funciones: true }
-            }
-          }
+          include: { rol: true }
         }
       }
     });
@@ -59,14 +54,16 @@ export const iniciarSesion = async (req: Request<{}, any, LoginBody>, res: Respo
       maxAge: 12 * 60 * 60 * 1000, // 12 horas
     });
 
-    // Formatear roles con funciones
-    const rolesFormateados = usuarioEncontrado.roles.map((ur) => ({
-      nombreRol: ur.rol.nombreRol,
-      funciones: ur.rol.funciones.map(f => ({
-        nombreFuncion: f.nombreFuncion,
-        icono: f.icono
-      }))
-    }));
+    const rolActual = usuarioEncontrado.roles[0]?.rol.nombreRol || "Socio";
+
+    // Crear la sesión
+    const sesion = await prisma.sesion.create({
+      data: {
+        idUsuario: usuarioEncontrado.idUsuario,
+        rolActual,
+        tokenSesion: token,
+      },
+    });
 
     // Respuesta final
     res.status(200).json({
@@ -76,7 +73,6 @@ export const iniciarSesion = async (req: Request<{}, any, LoginBody>, res: Respo
         usuario: usuarioEncontrado.usuario,
         nombre: usuarioEncontrado.nombre,
         apellido: usuarioEncontrado.apellido,
-        roles: rolesFormateados
       }
     });
 
