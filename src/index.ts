@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv'; 
 import usuarios from './routes/userRoutes';
 import cors from 'cors';
+import cookieParser from "cookie-parser";
 
 dotenv.config(); 
 
@@ -14,6 +15,7 @@ app.use(cors({
 
 const PORT = process.env.PORT || 5000;
 app.use(express.json());
+app.use(cookieParser());
 
 app.use('/auth', usuarios);
 
