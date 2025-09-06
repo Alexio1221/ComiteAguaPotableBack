@@ -2,7 +2,7 @@
 import { Router } from 'express';
 import { registrarUsuario } from '../controllers/auth/registrarUsuario';
 import { iniciarSesion } from '../controllers/auth/loginController';
-import { obtenerFuncionesPorRol } from '../controllers/roles/funcionesController';
+import { obtenerFuncionesPorRol, obtenerRoles } from '../controllers/roles/funcionesController';
 import { obtenerRolActual, actualizarRolActual } from '../controllers/auth/sesionController';
 
 const router = Router();
@@ -11,7 +11,8 @@ const router = Router();
 router.post('/registro', registrarUsuario);
 router.post('/login', iniciarSesion);
 router.get('/funciones/:nombreRol', obtenerFuncionesPorRol);
-router.get('/obtenerRolActual',obtenerRolActual)
-router.patch('/actualizarRolActual', actualizarRolActual)
+router.get('/obtenerRolActual',obtenerRolActual);
+router.patch('/actualizarRolActual', actualizarRolActual);
+router.get('/roles', obtenerRoles);
 
 export default router;
