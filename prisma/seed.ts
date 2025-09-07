@@ -38,19 +38,19 @@ async function main() {
   // === UsuarioRol ===
   await prisma.usuarioRol.createMany({
     data: [
-      { idUsuario: 1, idRol: 4 },
-      { idUsuario: 2, idRol: 4 },
-      { idUsuario: 3, idRol: 4 },
-      { idUsuario: 4, idRol: 4 },
-      { idUsuario: 5, idRol: 4 },
-      { idUsuario: 6, idRol: 4 },
-      { idUsuario: 7, idRol: 4 },
-      { idUsuario: 8, idRol: 4 },
-      { idUsuario: 9, idRol: 4 },
-      { idUsuario: 10, idRol: 4 },
-      { idUsuario: 1, idRol: 1 }, // Admin + Socio
-      { idUsuario: 2, idRol: 2 }, // Cajero + Socio
-      { idUsuario: 3, idRol: 3 }, // Operador + Socio
+      { idUsuario: 1, idRol: 4, estado: true },
+      { idUsuario: 2, idRol: 4, estado: true },
+      { idUsuario: 3, idRol: 4, estado: true },
+      { idUsuario: 4, idRol: 4, estado: true },
+      { idUsuario: 5, idRol: 4, estado: true },
+      { idUsuario: 6, idRol: 4, estado: true },
+      { idUsuario: 7, idRol: 4, estado: true },
+      { idUsuario: 8, idRol: 4, estado: true },
+      { idUsuario: 9, idRol: 4, estado: true },
+      { idUsuario: 10, idRol: 4, estado: true },
+      { idUsuario: 1, idRol: 1, estado: true }, // Admin + Socio
+      { idUsuario: 2, idRol: 2, estado: true }, // Cajero + Socio
+      { idUsuario: 3, idRol: 3, estado: true }, // Operador + Socio
     ],
     skipDuplicates: true,
   });

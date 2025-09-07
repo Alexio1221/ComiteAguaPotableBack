@@ -37,7 +37,8 @@ export const obtenerFuncionesPorRol = async (req: Request, res: Response) => {
   }
 };
 
-export const obtenerRoles = async (req: Request, res: Response) => {
+//Roles del usuario actual
+export const obtenerRolesUsuarioActual = async (req: Request, res: Response) => {
   try {
     const tokenSesionActual = req.cookies.token;
 
@@ -79,3 +80,4 @@ export const obtenerRoles = async (req: Request, res: Response) => {
     res.status(500).json({ mensaje: "Error interno del servidor" });
   }
 };
+

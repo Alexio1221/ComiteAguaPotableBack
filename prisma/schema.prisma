@@ -31,7 +31,7 @@ model Rol {
 model UsuarioRol {
   idUsuario         Int
   idRol             Int
-  estado            Boolean  @default(true)
+  estado            Boolean
   fechaCreacion     DateTime @default(now())
   fechaModificacion DateTime @updatedAt
   rol               Rol      @relation(fields: [idRol], references: [idRol])
