@@ -11,13 +11,17 @@ model Usuario {
   idUsuario    Int          @id @default(autoincrement())
   nombre       String
   apellido     String
-  telefono     String
+  telefono     String       @unique
+  chat_id      String?      @unique
+  telegramToken String?     // <-- token temporal para deep link
+  tokenExpira  DateTime?    // <-- opcional: expiración del token
   usuario      String       @unique
   contraseña  String
   creadoEn     DateTime     @default(now())
   modificadoEn DateTime     @updatedAt
   sesiones     Sesion[]
   roles        UsuarioRol[]
+  recuperaciones Recuperacion[]
 }
 
 model Rol {
@@ -57,4 +61,15 @@ model Sesion {
   creadoEn      DateTime @default(now())
   actualizadoEn DateTime @updatedAt
   usuario       Usuario  @relation(fields: [idUsuario], references: [idUsuario])
+}
+
+model Recuperacion {
+  idRecuperacion Int      @id @default(autoincrement())
+  idUsuario      Int
+  codigo         String
+  estado         Boolean  @default(true)  // true = activo, false = usado o expirado
+  creadoEn       DateTime @default(now())
+  expiraEn       DateTime  
+
+  usuario        Usuario  @relation(fields: [idUsuario], references: [idUsuario])
 }

@@ -1,8 +1,10 @@
 import express from 'express';
 import dotenv from 'dotenv'; 
 import usuarios from './routes/userRoutes';
+import telegram from './routes/telegramRoutes';
 import cors from 'cors';
 import cookieParser from "cookie-parser";
+import { iniciarBot } from './bot';
 
 dotenv.config(); 
 
@@ -18,6 +20,9 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/auth', usuarios);
+app.use('/api', telegram);
+
+iniciarBot();
 
 app.get('/', (_req, res) => {
   res.send('Servidor corriendo 🎉');
