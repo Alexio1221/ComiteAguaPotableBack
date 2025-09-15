@@ -7,6 +7,7 @@ import { obtenerRolActual, actualizarRolActual } from '../controllers/auth/sesio
 import { obtenerUsuarios, actualizarUsuario, cambiarContraseña } from '../controllers/auth/usuariosController';
 import { obtenerRoles } from '../controllers/roles/rolesController';
 import { obtenerCodigo, verificarCodigo } from '../controllers/passwordController';
+import {autenticar} from '../middlewares/autenticacion'
 
 
 
@@ -14,7 +15,7 @@ const router = Router();
 
 router.post('/registro', registrarUsuario); // Ruta para registrar un nuevo usuario
 router.post('/login', iniciarSesion);  // Ruta para iniciar sesión
-router.get('/funciones/:nombreRol', obtenerFuncionesPorRol);  // Ruta para obtener funciones por rol
+router.get('/funciones/:nombreRol', autenticar ,obtenerFuncionesPorRol);  // Ruta para obtener funciones por rol
 router.get('/obtenerRolActual',obtenerRolActual);  // Ruta para obtener el rol actual
 router.patch('/actualizarRolActual', actualizarRolActual);  // Ruta para actualizar el rol actual
 router.get('/roles-usuario-actual', obtenerRolesUsuarioActual);  
