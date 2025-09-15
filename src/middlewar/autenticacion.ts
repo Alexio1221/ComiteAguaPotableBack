@@ -9,7 +9,7 @@ export const autenticar = (req: Request, res: Response, next: NextFunction) => {
       return;
     }
     const decoded = verificarToken(token);
-    (req as any).user = decoded; // en vez de req.body.usuario
+    (req as any).user = decoded;
     next();
   } catch (error) {
     console.error('Error al verificar token:', error);

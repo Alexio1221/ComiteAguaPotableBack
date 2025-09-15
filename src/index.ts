@@ -5,7 +5,6 @@ import telegram from './routes/telegramRoutes';
 import cors from 'cors';
 import cookieParser from "cookie-parser";
 import { iniciarBot } from './bot';
-import {autenticar} from './middlewares/autenticacion'
 
 dotenv.config(); 
 

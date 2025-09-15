@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { registrarChatPorToken, generarLinkTelegram } from '../controllers/telegramController';
-import { cambiarContraseña } from '../controllers/auth/usuariosController';//mover a userRoutes luego
+import { registrarChatPorToken, generarLinkTelegram } from '../controllers/telegram/telegramController';
+import { cambiarContraseña } from '../controllers/usuarios/usuariosController';//mover a userRoutes luego
 
 const router = Router();
 

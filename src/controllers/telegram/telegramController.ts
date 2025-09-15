@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import prisma from "../config/client";
+import prisma from "../../config/client";
 import crypto from "crypto";
 
 export const generarLinkTelegram = async (req: Request, res: Response) => {

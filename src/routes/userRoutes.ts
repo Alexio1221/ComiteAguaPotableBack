@@ -1,13 +1,13 @@
 // src/routes/auth.ts
 import { Router } from 'express';
-import { registrarUsuario } from '../controllers/auth/registrarUsuario';
-import { iniciarSesion } from '../controllers/auth/loginController';
+import { registrarUsuario } from '../controllers/usuarios/registrarUsuario';
+import { iniciarSesion } from '../controllers/usuarios/loginController';
 import { obtenerFuncionesPorRol, obtenerRolesUsuarioActual } from '../controllers/roles/funcionesController';
-import { obtenerRolActual, actualizarRolActual } from '../controllers/auth/sesionController';
-import { obtenerUsuarios, actualizarUsuario, cambiarContraseña } from '../controllers/auth/usuariosController';
+import { obtenerRolActual, actualizarRolActual } from '../controllers/usuarios/sesionController';
+import { obtenerUsuarios, actualizarUsuario, cambiarContraseña } from '../controllers/usuarios/usuariosController';
 import { obtenerRoles } from '../controllers/roles/rolesController';
-import { obtenerCodigo, verificarCodigo } from '../controllers/passwordController';
-import {autenticar} from '../middlewares/autenticacion'
+import { obtenerCodigo, verificarCodigo } from '../controllers/telegram/passwordController';
+import {autenticar} from '../middlewar/autenticacion'
 
 
 

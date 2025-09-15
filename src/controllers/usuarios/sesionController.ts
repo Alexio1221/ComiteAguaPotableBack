@@ -36,7 +36,7 @@ export const actualizarRolActual = async (
   req: Request,
   res: Response,
   next: NextFunction
-): Promise<void> => {  // <-- cambiar a Promise<void>
+): Promise<void> => {  
   try {
     const tokenSesionActual = req.cookies.token;
 

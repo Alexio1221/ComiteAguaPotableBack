@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import prisma from "../config/client";
+import prisma from "../../config/client";
 import { Telegraf } from "telegraf";
 
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN!);

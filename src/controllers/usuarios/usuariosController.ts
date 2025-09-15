@@ -3,54 +3,79 @@ import prisma from '../../config/client'; // asegúrate de que este sea tu prism
 import bcrypt from 'bcryptjs';
 
 export const obtenerUsuarios = async (req: Request, res: Response) => {
-    try {
-        const usuarios = await prisma.usuario.findMany({
-            include: {
-                roles: {
-                    include: {
-                        rol: true
-                    }
-                }
-            },
-            orderBy: {
-                idUsuario: "asc"
-            }
-        });
+  try {
+    const usuarios = await prisma.usuario.findMany({
+      include: {
+        roles: {
+          include: {
+            rol: true
+          }
+        }
+      },
+      orderBy: {
+        idUsuario: "asc"
+      }
+    });
 
-        // Transformar formato json
-        const resultado = usuarios.map((u) => ({
-            idUsuario: u.idUsuario,
-            nombre: u.nombre,
-            apellido: u.apellido,
-            telefono: u.telefono,
-            usuario: u.usuario,
-            roles: u.roles.map((ur) => ({
-                idRol: ur.rol.idRol,
-                nombreRol: ur.rol.nombreRol,
-                estado: ur.estado,
-                descripcion: ur.rol.descripcion,
-            }))
-        }));
+    // Transformar formato json
+    const resultado = usuarios.map((u) => ({
+      idUsuario: u.idUsuario,
+      nombre: u.nombre,
+      apellido: u.apellido,
+      telefono: u.telefono,
+      usuario: u.usuario,
+      roles: u.roles.map((ur) => ({
+        idRol: ur.rol.idRol,
+        nombreRol: ur.rol.nombreRol,
+        estado: ur.estado,
+        descripcion: ur.rol.descripcion,
+      }))
+    }));
 
-        res.json({ usuarios: resultado });
-    } catch (error) {
-        console.error("Error al obtener usuarios:", error);
-        res.status(500).json({ mensaje: "Error al obtener usuarios" });
-    }
+    res.json({ usuarios: resultado });
+  } catch (error) {
+    console.error("Error al obtener usuarios:", error);
+    res.status(500).json({ mensaje: "Error al obtener usuarios" });
+  }
 };
 
 export const actualizarUsuario = async (req: Request, res: Response) => {
+  //console.log('Params recibidos:', req.params);
+  //console.log('Body recibido:', req.body);
+
   const { idUsuario } = req.params;
-  const { nombre, apellido, telefono, usuario, estadosRoles } = req.body;
+  const { nombre, apellido, telefono, usuario, rolesIds = [], estadosRoles = {} } = req.body;
 
   try {
-    // 1. Actualizar datos básicos del usuario
+    // Asegurar que siempre se incluya Socio
+    if (!rolesIds.includes(4)) rolesIds.push(4);
+
+    //  Actualizar datos básicos del usuario
     const usuarioActualizado = await prisma.usuario.update({
       where: { idUsuario: Number(idUsuario) },
       data: { nombre, apellido, telefono, usuario },
     });
 
-    // 2. Actualizar solo el estado de cada rol ya asignado
+    //Obtener los roles actuales del usuario
+    const rolesActuales = await prisma.usuarioRol.findMany({
+      where: { idUsuario: usuarioActualizado.idUsuario },
+    });
+    //Ids de los roles actuales
+    const rolesActualesIds = rolesActuales.map(r => r.idRol);
+    // Diferencia (roles que no existen aún en BD)
+    const rolesNuevos = rolesIds.filter((id: number) => !rolesActualesIds.includes(id));
+
+    // Crear esos roles nuevos
+    for (const idRol of rolesNuevos) {
+      await prisma.usuarioRol.create({
+        data: {
+          idUsuario: usuarioActualizado.idUsuario,
+          idRol,
+        },
+      });
+    }
+
+    // Actualizar solo el estado de cada rol ya asignado
     if (estadosRoles) {
       for (const [idRolStr, estado] of Object.entries(estadosRoles)) {
         const idRol = Number(idRolStr);
@@ -61,12 +86,12 @@ export const actualizarUsuario = async (req: Request, res: Response) => {
       }
     }
 
-    // 3. Traer usuario con roles actualizados
+    //  Traer usuario con roles actualizados
     const rolesActualizados = await prisma.usuarioRol.findMany({
       where: { idUsuario: usuarioActualizado.idUsuario },
       include: { rol: true },
     });
-
+    //Es necesario para actualizar solo ese usuario en el frontend
     const resultado = {
       idUsuario: usuarioActualizado.idUsuario,
       nombre: usuarioActualizado.nombre,
@@ -77,9 +102,10 @@ export const actualizarUsuario = async (req: Request, res: Response) => {
         idRol: ur.rol.idRol,
         nombreRol: ur.rol.nombreRol,
         estado: ur.estado,
-        descripcion: ur.rol.descripcion,
       })),
     };
+
+    //console.log('Datos enviados:', resultado);
 
     res.json(resultado);
   } catch (error) {
