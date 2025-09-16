@@ -4,7 +4,7 @@ import { cambiarContraseña } from '../controllers/usuarios/usuariosController';
 
 const router = Router();
 
-router.post("/registrar-chat-token", registrarChatPorToken);
+router.post("/registrar-chat-token", registrarChatPorToken); //se usa dentro de back
 router.post("/generar-link-telegram", generarLinkTelegram);
 router.post('/cambiar-password', cambiarContraseña)
 

@@ -25,8 +25,13 @@ export function iniciarBot() {
 
       await ctx.reply("✅ Cuenta vinculada correctamente. Ahora ya puedo enviarte códigos.");
     } catch (error: any) {
-      console.error("Error al registrar chat_id:", error?.response?.data || error);
-      await ctx.reply("❌ Error al vincular cuenta. Intenta generar un nuevo enlace.");
+      //console.error("Error al registrar chat_id:", error?.response?.data || error);
+      await ctx.reply(
+        `❌ Error al vincular cuenta: <b>${error?.response?.data?.mensaje || "Intenta generar un nuevo enlace."}</b>`,
+        { parse_mode: "HTML" }
+      );
+
+
     }
   });
 

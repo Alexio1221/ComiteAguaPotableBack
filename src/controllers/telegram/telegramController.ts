@@ -3,9 +3,19 @@ import prisma from "../../config/client";
 import crypto from "crypto";
 
 export const generarLinkTelegram = async (req: Request, res: Response) => {
-  const { usuario } = req.body; 
+  const { usuario } = req.body;
 
   try {
+    // Verificamos si el usuario existe
+    const usuarioDB = await prisma.usuario.findUnique({
+      where: { usuario: usuario.toLowerCase() },
+    });
+
+    if (!usuarioDB) {
+      res.status(404).json({ mensaje: "Ingresa un usuario válido" });
+      return;
+    }
+
     const token = crypto.randomBytes(16).toString("hex");
     const expiracion = new Date(Date.now() + 10 * 60 * 1000); // 10 min
 
@@ -42,11 +52,23 @@ export const registrarChatPorToken = async (req: Request, res: Response) => {
       return;
     }
 
+    // Buscar si el chat_id ya está asignado a otro usuario
+    const existente = await prisma.usuario.findFirst({
+      where: { chat_id },
+    });
+
+    if (existente && existente.idUsuario !== usuario.idUsuario) {
+      res.status(409).json({
+        mensaje: `Este chat ya está vinculado al usuario ${existente.usuario}`,
+      });
+      return;
+    }
+
     await prisma.usuario.update({
       where: { idUsuario: usuario.idUsuario },
       data: {
         chat_id,
-        telegramToken: null, 
+        telegramToken: null,
         tokenExpira: null,
       },
     });
