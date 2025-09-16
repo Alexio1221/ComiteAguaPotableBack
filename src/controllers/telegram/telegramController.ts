@@ -3,14 +3,14 @@ import prisma from "../../config/client";
 import crypto from "crypto";
 
 export const generarLinkTelegram = async (req: Request, res: Response) => {
-  const { idUsuario } = req.body; // o lo obtienes de tu sesión
+  const { usuario } = req.body; 
 
   try {
     const token = crypto.randomBytes(16).toString("hex");
     const expiracion = new Date(Date.now() + 10 * 60 * 1000); // 10 min
 
     await prisma.usuario.update({
-      where: { idUsuario },
+      where: { usuario: usuario.toLowerCase() },
       data: { telegramToken: token, tokenExpira: expiracion },
     });
 
