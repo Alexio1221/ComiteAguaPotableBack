@@ -81,3 +81,29 @@ export const iniciarSesion = async (req: Request<{}, any, LoginBody>, res: Respo
     res.status(500).json({ error: 'ERROR_SERVIDOR', mensaje: 'Error interno del servidor.' });
   }
 };
+
+
+export const cerrarSesion = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const token = req.cookies.token;
+
+    if (token) {
+      await prisma.sesion.updateMany({
+        where: { tokenSesion: token },
+        data: { estado: false },
+      });
+    }
+
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+    });
+
+    res.json({ mensaje: 'Sesión cerrada correctamente' });
+  } catch (error) {
+    console.error('Error al cerrar sesión:', error);
+    res.status(500).json({ error: 'ERROR_SERVIDOR', mensaje: 'Error interno del servidor.' });
+  }
+};

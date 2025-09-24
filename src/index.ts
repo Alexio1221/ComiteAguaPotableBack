@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv'; 
 import usuarios from './routes/userRoutes';
 import telegram from './routes/telegramRoutes';
+import sesion from './routes/sesionRoutes'
 import cors from 'cors';
 import cookieParser from "cookie-parser";
 import { iniciarBot } from './bot';
@@ -21,6 +22,7 @@ app.use(cookieParser());
 
 app.use('/auth', usuarios);
 app.use('/api', telegram);
+app.use('/sesion', sesion)
 
 iniciarBot();
 
