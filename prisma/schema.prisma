@@ -9,9 +9,10 @@ datasource db {
 
 model Usuario {
   idUsuario    Int          @id @default(autoincrement())
-  nombre       String
-  apellido     String
+  nombres       String
+  apellidos     String
   telefono     String       @unique
+  ci           String       @unique
   chat_id      String?      @unique
   telegramToken String?     // <-- token temporal para deep link
   tokenExpira  DateTime?    // <-- opcional: expiración del token
@@ -22,6 +23,7 @@ model Usuario {
   sesiones     Sesion[]
   roles        UsuarioRol[]
   recuperaciones Recuperacion[]
+  medidores    Medidor[]
 }
 
 model Rol {
@@ -72,4 +74,39 @@ model Recuperacion {
   expiraEn       DateTime  
 
   usuario        Usuario  @relation(fields: [idUsuario], references: [idUsuario])
+}
+
+model Medidor {
+  idMedidor    Int    @id @default(autoincrement())
+  idSocio      Int
+  idCategoria  Int
+  estado       Estado    @default(INACTIVO)
+  categoria    Categoria @relation(fields: [idCategoria], references: [idCategoria])
+  socio        Usuario   @relation(fields: [idSocio], references: [idUsuario])
+  ubicacionSocio UbicacionSocio[]
+}
+
+model Categoria {
+  idCategoria  Int    @id @default(autoincrement())
+  tipo         String
+  tarifa       Float
+  tarifaAdicional Float
+  descripcion  String
+  medidores    Medidor[]
+}
+
+model UbicacionSocio {
+  idUbicacion  Int    @id @default(autoincrement())
+  idMedidor    Int
+  direccion    String
+  latitud      Float
+  longitud     Float
+  descripcion  String
+  medidor    Medidor @relation(fields: [idMedidor], references: [idMedidor])
+}
+
+enum Estado {
+  ACTIVO
+  INACTIVO
+  SUSPENDIDO
 }

@@ -8,8 +8,6 @@ import { obtenerRoles } from '../controllers/roles/rolesController';
 import { obtenerCodigo, verificarCodigo } from '../controllers/telegram/passwordController';
 import {autenticar} from '../middlewar/autenticacion'
 
-
-
 const router = Router();
 
 router.post('/usuario', registrarUsuario);  // Ruta para registrar un nuevo usuario
