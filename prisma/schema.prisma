@@ -80,6 +80,7 @@ model Medidor {
   idMedidor    Int    @id @default(autoincrement())
   idSocio      Int
   idCategoria  Int
+  fechaRegistro DateTime @default(now())
   estado       Estado    @default(INACTIVO)
   categoria    Categoria @relation(fields: [idCategoria], references: [idCategoria])
   socio        Usuario   @relation(fields: [idSocio], references: [idUsuario])
