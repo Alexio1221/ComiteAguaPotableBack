@@ -18,7 +18,8 @@ router.get('/roles-usuario-actual', obtenerRolesUsuarioActual);
 router.get('/usuarios', obtenerUsuarios);   //obtiene toda la informacion de los usuarios 
 router.put('/usuario/:idUsuario', actualizarUsuario);  //Actualiza la informacion del usuario
 router.get('/roles', obtenerRoles);   //obtiene todos los roles
-router.post("/recuperar-codigo", obtenerCodigo);
-router.post("/verificar-codigo", verificarCodigo);
+router.post("/recuperar-codigo", obtenerCodigo);    //Obtener codigo para recuperar la contraseña
+router.post("/verificar-codigo", verificarCodigo);  //Verificar codigo recibido
+
 
 export default router;
