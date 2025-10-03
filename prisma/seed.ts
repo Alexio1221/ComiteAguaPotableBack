@@ -60,13 +60,11 @@ async function main() {
     data: [
       { idRol: 1, nombreFuncion: "Usuarios", icono: "Users" },
       { idRol: 1, nombreFuncion: "Medidores", icono: "Gauge" },
-      { idRol: 1, nombreFuncion: "Pagos", icono: "CreditCard" },
       { idRol: 1, nombreFuncion: "Reportes", icono: "BarChart" },
       { idRol: 1, nombreFuncion: "Incidencias", icono: "AlertTriangle" },
       { idRol: 1, nombreFuncion: "Avisos", icono: "Bell" },
       { idRol: 1, nombreFuncion: "Mapa", icono: "Map" },
       { idRol: 1, nombreFuncion: "Asambleas", icono: "ClipboardList" },
-      { idRol: 1, nombreFuncion: "Estadísticas", icono: "Activity" },
 
       { idRol: 2, nombreFuncion: "Cobros", icono: "DollarSign" },
       { idRol: 2, nombreFuncion: "Comprobantes", icono: "FileText" },
@@ -82,8 +80,6 @@ async function main() {
       { idRol: 3, nombreFuncion: "Asistencia", icono: "CheckSquare" },
 
       { idRol: 4, nombreFuncion: "Consumo", icono: "Droplet" },
-      { idRol: 4, nombreFuncion: "Pagos", icono: "CreditCard" },
-      { idRol: 4, nombreFuncion: "Cuenta", icono: "Book" },
       { idRol: 4, nombreFuncion: "Avisos", icono: "Bell" },
       { idRol: 4, nombreFuncion: "Reclamos", icono: "AlertCircle" },
       { idRol: 4, nombreFuncion: "Reuniones", icono: "Calendar" },
