@@ -21,16 +21,16 @@ async function main() {
   // === Usuarios ===
   await prisma.usuario.createMany({
     data: [
-      { nombre: "Alex", apellido: "Garcia Colque", telefono: "67483408", usuario: "alexdev", contraseña: passwordHash },
-      { nombre: "Carla", apellido: "Aldapi", telefono: "70000002", usuario: "carla", contraseña: passwordHash },
-      { nombre: "Carlos", apellido: "Lopez", telefono: "70000003", usuario: "carlosg", contraseña: passwordHash },
-      { nombre: "Ana", apellido: "Torrez", telefono: "70000004", usuario: "anat", contraseña: passwordHash },
-      { nombre: "Luis", apellido: "Martinez", telefono: "70000005", usuario: "luism", contraseña: passwordHash },
-      { nombre: "Laura", apellido: "Fernandez", telefono: "70000006", usuario: "lauraf", contraseña: passwordHash },
-      { nombre: "Pedro", apellido: "Gutierrez", telefono: "70000007", usuario: "pedrog", contraseña: passwordHash },
-      { nombre: "Sofia", apellido: "Rodriguez", telefono: "70000008", usuario: "sofiar", contraseña: passwordHash },
-      { nombre: "Diego", apellido: "Suarez", telefono: "70000009", usuario: "diegos", contraseña: passwordHash },
-      { nombre: "Camila", apellido: "Mendoza", telefono: "70000010", usuario: "camilam", contraseña: passwordHash },
+      { nombre: "Alex", apellidos: "Garcia Colque", telefono: "67483408", ci: "12345678", usuario: "alexdev", contraseña: passwordHash },
+      { nombre: "Carla", apellidos: "Aldapi", telefono: "70000002", ci: "12345679", usuario: "carla", contraseña: passwordHash },
+      { nombre: "Carlos", apellidos: "Lopez", telefono: "70000003", ci: "12345680", usuario: "carlosg", contraseña: passwordHash },
+      { nombre: "Ana", apellidos: "Torrez", telefono: "70000004", ci: "12345681", usuario: "anat", contraseña: passwordHash },
+      { nombre: "Luis", apellidos: "Martinez", telefono: "70000005", ci: "12345682", usuario: "luism", contraseña: passwordHash },
+      { nombre: "Laura", apellidos: "Fernandez", telefono: "70000006", ci: "12345683", usuario: "lauraf", contraseña: passwordHash },
+      { nombre: "Pedro", apellidos: "Gutierrez", telefono: "70000007", ci: "12345684", usuario: "pedrog", contraseña: passwordHash },
+      { nombre: "Sofia", apellidos: "Rodriguez", telefono: "70000008", ci: "12345685", usuario: "sofiar", contraseña: passwordHash },
+      { nombre: "Diego", apellidos: "Suarez", telefono: "70000009", ci: "12345686", usuario: "diegos", contraseña: passwordHash },
+      { nombre: "Camila", apellidos: "Mendoza", telefono: "70000010", ci: "12345687", usuario: "camilam", contraseña: passwordHash },
     ],
     skipDuplicates: true,
   });
@@ -59,6 +59,7 @@ async function main() {
   await prisma.funcion.createMany({
     data: [
       { idRol: 1, nombreFuncion: "Usuarios", icono: "Users" },
+      { idRol: 1, nombreFuncion: "Medidores", icono: "Gauge" },
       { idRol: 1, nombreFuncion: "Pagos", icono: "CreditCard" },
       { idRol: 1, nombreFuncion: "Reportes", icono: "BarChart" },
       { idRol: 1, nombreFuncion: "Incidencias", icono: "AlertTriangle" },

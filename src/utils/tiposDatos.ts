@@ -2,7 +2,7 @@
 
 export interface RegistroBody {
   nombre: string;
-  apellido: string;
+  apellidos: string;
   telefono: string;
   usuario: string;
   contraseña: string;

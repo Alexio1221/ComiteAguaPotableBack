@@ -21,7 +21,7 @@ export const obtenerUsuarios = async (req: Request, res: Response) => {
     const resultado = usuarios.map((u) => ({
       idUsuario: u.idUsuario,
       nombre: u.nombre,
-      apellido: u.apellido,
+      apellidos: u.apellidos,
       telefono: u.telefono,
       usuario: u.usuario,
       roles: u.roles.map((ur) => ({

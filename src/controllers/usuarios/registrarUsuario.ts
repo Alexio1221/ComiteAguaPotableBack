@@ -14,7 +14,7 @@ export const registrarUsuario = async (
   try {
     const {
       nombre,
-      apellido,
+      apellidos,
       telefono,
       usuario,
       contraseña,
@@ -28,7 +28,7 @@ export const registrarUsuario = async (
     // Validaciones de campos obligatorios
     if (
       !nombre?.trim() ||
-      !apellido?.trim() ||
+      !apellidos?.trim() ||
       !telefono?.trim() ||
       !usuario?.trim() ||
       !contraseña ||
@@ -45,7 +45,7 @@ export const registrarUsuario = async (
     }
 
     // Validar longitud del nombre y apellido
-    const validacionNombreApellido = validarNombreApellido(nombre.trim(), apellido.trim());
+    const validacionNombreApellido = validarNombreApellido(nombre.trim(), apellidos.trim());
     if (!validacionNombreApellido.valido) {
       res.status(400).json({
         error: 'USUARIO_INVALIDO',
@@ -104,8 +104,9 @@ export const registrarUsuario = async (
     const nuevoUsuario = await prisma.usuario.create({
       data: {
         nombre: nombre.trim(),
-        apellido: apellido.trim(),
+        apellidos: apellidos.trim(),
         telefono: telefono.trim(),
+        ci: "",
         usuario: usuario.trim().toLowerCase(),
         contraseña: contraseñaHash
       }
@@ -133,7 +134,7 @@ export const registrarUsuario = async (
     const resultado = {
       idUsuario: nuevoUsuario.idUsuario,
       nombre: nuevoUsuario.nombre,
-      apellido: nuevoUsuario.apellido,
+      apellidos: nuevoUsuario.apellidos,
       telefono: nuevoUsuario.telefono,
       usuario: nuevoUsuario.usuario,
       roles: rolesAsignados.map((ur) => ({
@@ -158,7 +159,7 @@ export const actualizarUsuario = async (req: Request, res: Response) => {
   //console.log('Body recibido:', req.body);
 
   const { idUsuario } = req.params;
-  const { nombre, apellido, telefono, usuario, rolesIds = [], estadosRoles = {} } = req.body;
+  const { nombre, apellidos, telefono, usuario, rolesIds = [], estadosRoles = {} } = req.body;
 
   try {
     // Asegurar que siempre se incluya Socio
@@ -166,7 +167,7 @@ export const actualizarUsuario = async (req: Request, res: Response) => {
 
 
     // Validar longitud del nombre y apellido
-    const validacionNombreApellido = validarNombreApellido(nombre.trim(), apellido.trim());
+    const validacionNombreApellido = validarNombreApellido(nombre.trim(), apellidos.trim());
     if (!validacionNombreApellido.valido) {
       res.status(400).json({
         error: 'USUARIO_INVALIDO',
@@ -199,7 +200,7 @@ export const actualizarUsuario = async (req: Request, res: Response) => {
     const usuarioMinuscula = usuario.trim().toLowerCase();
     const usuarioActualizado = await prisma.usuario.update({
       where: { idUsuario: Number(idUsuario) },
-      data: { nombre, apellido, telefono, usuario: usuarioMinuscula },
+      data: { nombre, apellidos, telefono, ci: "", usuario: usuarioMinuscula },
     });
 
     //Obtener los roles actuales del usuario
@@ -241,7 +242,7 @@ export const actualizarUsuario = async (req: Request, res: Response) => {
     const resultado = {
       idUsuario: usuarioActualizado.idUsuario,
       nombre: usuarioActualizado.nombre,
-      apellido: usuarioActualizado.apellido,
+      apellidos: usuarioActualizado.apellidos,
       telefono: usuarioActualizado.telefono,
       usuario: usuarioActualizado.usuario,
       roles: rolesActualizados.map((ur) => ({
