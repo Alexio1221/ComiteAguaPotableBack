@@ -78,7 +78,7 @@ export const eliminarAvisoNoticia = async (req: Request, res: Response) => {
 
     // Eliminar imagen del servidor si existe
     if (aviso.imagen) {
-      const imagenPath = path.join(__dirname, '../../', aviso.imagen)
+      const imagenPath = path.join(__dirname, '../../../', aviso.imagen)
       fs.unlink(imagenPath, (err) => {
         if (err) console.error('Error al eliminar la imagen:', err)
       })
