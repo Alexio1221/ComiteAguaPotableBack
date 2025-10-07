@@ -58,6 +58,7 @@ async function main() {
   // === Funciones ===
   await prisma.funcion.createMany({
     data: [
+      { idRol: 1, nombreFuncion: "Asistencia", icono: "UserRoundCheck" },
       { idRol: 1, nombreFuncion: "Usuarios", icono: "Users" },
       { idRol: 1, nombreFuncion: "Medidores", icono: "Gauge" },
       { idRol: 1, nombreFuncion: "Reportes", icono: "BarChart" },
