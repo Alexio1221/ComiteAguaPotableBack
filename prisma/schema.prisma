@@ -24,6 +24,7 @@ model Usuario {
   roles        UsuarioRol[]
   recuperaciones Recuperacion[]
   medidores    Medidor[]
+  asistencias  Asistencia[]
 }
 
 model Rol {
@@ -105,6 +106,41 @@ model UbicacionSocio {
   descripcion  String
   medidor    Medidor @relation(fields: [idMedidor], references: [idMedidor])
 }
+
+model NoticiasYAvisos {
+  idNoticiaAviso   Int   @id @default(autoincrement())
+  titulo           String
+  descripcion      String
+  fechaPublicacion DateTime @default(now())
+  fechaVigencia    DateTime
+  imagen           String?
+}
+
+model Reunion {
+  idReunion         Int        @id @default(autoincrement())
+  tipo              String
+  fecha             DateTime   
+  hora              String     // hora en formato 'HH:mm'
+  lugar             String
+  motivo            String
+  descripcion       String
+  documentoAsamblea String?
+
+  asistencias       Asistencia[]
+}
+
+model Asistencia {
+  idReunion Int
+  idUsuario Int
+  estado    Boolean   @default(false) // true = asistió
+  registradoEn DateTime @default(now()) // cuando marcó asistencia
+
+  reunion   Reunion @relation(fields: [idReunion], references: [idReunion])
+  usuario   Usuario @relation(fields: [idUsuario], references: [idUsuario])
+
+  @@id([idReunion, idUsuario])
+}
+
 
 enum Estado {
   ACTIVO

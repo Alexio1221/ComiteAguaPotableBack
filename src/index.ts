@@ -3,8 +3,10 @@ import dotenv from 'dotenv';
 import usuarios from './routes/userRoutes';
 import telegram from './routes/telegramRoutes';
 import sesion from './routes/sesionRoutes'
+import avisosNoticias from './routes/avisosNoticiasRoutes';
 import cors from 'cors';
 import cookieParser from "cookie-parser";
+import path from 'path'
 import { iniciarBot } from './bot';
 
 dotenv.config(); 
@@ -22,7 +24,9 @@ app.use(cookieParser());
 
 app.use('/auth', usuarios);
 app.use('/api', telegram);
-app.use('/sesion', sesion)
+app.use('/sesion', sesion);
+app.use('/avisos', avisosNoticias);
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')))
 
 iniciarBot();
 
