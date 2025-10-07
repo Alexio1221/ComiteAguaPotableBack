@@ -4,6 +4,7 @@ import usuarios from './routes/userRoutes';
 import telegram from './routes/telegramRoutes';
 import sesion from './routes/sesionRoutes'
 import avisosNoticias from './routes/ReunionesAvisosNoticiasRoutes';
+import mapa from './routes/mapaRoutes';
 import cors from 'cors';
 import cookieParser from "cookie-parser";
 import path from 'path'
@@ -26,6 +27,7 @@ app.use('/auth', usuarios);
 app.use('/api', telegram);
 app.use('/sesion', sesion);
 app.use('/avisos', avisosNoticias);
+app.use('/mapa', mapa);
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')))
 
 iniciarBot();

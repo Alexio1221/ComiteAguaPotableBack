@@ -82,10 +82,10 @@ model Medidor {
   idSocio      Int
   idCategoria  Int
   fechaRegistro DateTime @default(now())
-  estado       Estado    @default(INACTIVO)
+  estado       Estado    @default(ACTIVO)
   categoria    Categoria @relation(fields: [idCategoria], references: [idCategoria])
   socio        Usuario   @relation(fields: [idSocio], references: [idUsuario])
-  ubicacionSocio UbicacionSocio[]
+  ubicacionSocio UbicacionSocio?
 }
 
 model Categoria {
@@ -99,12 +99,12 @@ model Categoria {
 
 model UbicacionSocio {
   idUbicacion  Int    @id @default(autoincrement())
-  idMedidor    Int
+  idMedidor    Int    @unique
   direccion    String
   latitud      Float
   longitud     Float
   descripcion  String
-  medidor    Medidor @relation(fields: [idMedidor], references: [idMedidor])
+  medidor     Medidor @relation(fields: [idMedidor], references: [idMedidor])
 }
 
 model NoticiasYAvisos {

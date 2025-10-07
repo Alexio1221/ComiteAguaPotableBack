@@ -10,14 +10,14 @@ export const crearAvisoNoticia = async (req: Request, res: Response) => {
 
     //Validación 
     if (!titulo || !descripcion || !fechaVigencia) {
-      res.status(400).json({ message: 'Todos los campos obligatorios deben completarse.' });
+      res.status(400).json({ mensaje: 'Todos los campos obligatorios deben completarse.' });
       return;
     }
 
     // Validación de fecha
     const hoy = new Date().toISOString().split('T')[0]
     if (fechaVigencia <= hoy) {
-      res.status(400).json({ message: 'La fecha de vigencia debe ser posterior al día actual.' });
+      res.status(400).json({ mensaje: 'La fecha de vigencia debe ser posterior al día actual.' });
       return;
     }
 
@@ -36,7 +36,7 @@ export const crearAvisoNoticia = async (req: Request, res: Response) => {
     res.status(201).json(nuevoAviso);
   } catch (error) {
     console.error('Error al crear aviso:', error)
-    res.status(500).json({ message: 'Error al crear el aviso o noticia.' })
+    res.status(500).json({ mensaje: 'Error al crear el aviso o noticia.' })
   }
 }
 
@@ -57,7 +57,7 @@ export const obtenerAvisoNoticias = async (_req: Request, res: Response) => {
     res.status(200).json(avisosVigentes)
   } catch (error) {
     console.error('Error al obtener avisos vigentes:', error)
-    res.status(500).json({ message: 'Error al obtener los avisos o noticias vigentes.' })
+    res.status(500).json({ mensaje: 'Error al obtener los avisos o noticias vigentes.' })
   }
 }
 
@@ -72,7 +72,7 @@ export const eliminarAvisoNoticia = async (req: Request, res: Response) => {
     })
 
     if (!aviso) {
-      res.status(404).json({ message: 'Aviso no encontrado.' })
+      res.status(404).json({ mensaje: 'Aviso no encontrado.' })
       return
     }
 
@@ -89,9 +89,9 @@ export const eliminarAvisoNoticia = async (req: Request, res: Response) => {
       where: { idNoticiaAviso: Number(id) },
     })
 
-    res.status(200).json({ message: 'Aviso eliminado correctamente.' })
+    res.status(200).json({ mensaje: 'Aviso eliminado correctamente.' })
   } catch (error) {
     console.error('Error al eliminar aviso:', error)
-    res.status(500).json({ message: 'Error al eliminar el aviso o noticia.' })
+    res.status(500).json({ mensaje: 'Error al eliminar el aviso o noticia.' })
   }
 }
