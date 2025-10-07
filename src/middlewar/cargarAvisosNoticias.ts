@@ -2,22 +2,27 @@ import multer from 'multer'
 import path from 'path'
 import fs from 'fs'
 
-const uploadDir = path.join(__dirname, '../../uploads/avisosNoticias')
+// Función para crear un storage dinámico
+const crearStorage = (carpeta: string) => {
+  const uploadDir = path.join(__dirname, '../../uploads', carpeta)
 
-// crear carpeta si no existe
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true })
+  // Crear carpeta si no existe
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true })
+  }
+
+  return multer.diskStorage({
+    destination: (_req, _file, cb) => {
+      cb(null, uploadDir)
+    },
+    filename: (_req, file, cb) => {
+      const ext = path.extname(file.originalname)
+      const name = Date.now() + '-' + Math.round(Math.random() * 1e9) + ext
+      cb(null, name)
+    },
+  })
 }
 
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => {
-    cb(null, uploadDir)
-  },
-  filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname)
-    const name = Date.now() + '-' + Math.round(Math.random() * 1e9) + ext
-    cb(null, name)
-  },
-})
-
-export default multer({ storage })
+// Middlewares separados
+export const cargarAvisosNoticias = multer({ storage: crearStorage('avisosNoticias') })
+export const cargarDocumentosAsamblea = multer({ storage: crearStorage('asambleas') })

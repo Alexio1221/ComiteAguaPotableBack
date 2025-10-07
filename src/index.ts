@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import usuarios from './routes/userRoutes';
 import telegram from './routes/telegramRoutes';
 import sesion from './routes/sesionRoutes'
-import avisosNoticias from './routes/avisosNoticiasRoutes';
+import avisosNoticias from './routes/ReunionesAvisosNoticiasRoutes';
 import cors from 'cors';
 import cookieParser from "cookie-parser";
 import path from 'path'
