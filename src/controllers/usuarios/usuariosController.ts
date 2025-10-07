@@ -24,6 +24,7 @@ export const obtenerUsuarios = async (req: Request, res: Response) => {
       apellidos: u.apellidos,
       telefono: u.telefono,
       usuario: u.usuario,
+      ci: u.ci,
       roles: u.roles.map((ur) => ({
         idRol: ur.rol.idRol,
         nombreRol: ur.rol.nombreRol,

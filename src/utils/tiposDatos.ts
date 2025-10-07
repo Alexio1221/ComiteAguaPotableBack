@@ -6,6 +6,7 @@ export interface RegistroBody {
   telefono: string;
   usuario: string;
   contraseña: string;
+  ci: string;
   rolesIds: number[];
   estadosRoles: Record<string, boolean>;
 }

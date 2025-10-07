@@ -18,6 +18,7 @@ export const registrarUsuario = async (
       telefono,
       usuario,
       contraseña,
+      ci,
       rolesIds = [],
       estadosRoles = {}
     } = req.body;
@@ -32,6 +33,7 @@ export const registrarUsuario = async (
       !telefono?.trim() ||
       !usuario?.trim() ||
       !contraseña ||
+      !ci?.trim() ||
       !Array.isArray(rolesIds) ||
       rolesIds.length === 0 ||
       !estadosRoles ||
@@ -106,7 +108,7 @@ export const registrarUsuario = async (
         nombre: nombre.trim(),
         apellidos: apellidos.trim(),
         telefono: telefono.trim(),
-        ci: "",
+        ci: ci.trim(),
         usuario: usuario.trim().toLowerCase(),
         contraseña: contraseñaHash
       }
@@ -137,6 +139,7 @@ export const registrarUsuario = async (
       apellidos: nuevoUsuario.apellidos,
       telefono: nuevoUsuario.telefono,
       usuario: nuevoUsuario.usuario,
+      ci: nuevoUsuario.ci,
       roles: rolesAsignados.map((ur) => ({
         idRol: ur.rol.idRol,
         nombreRol: ur.rol.nombreRol,
@@ -145,7 +148,27 @@ export const registrarUsuario = async (
     };
 
     res.json(resultado);
-  } catch (error) {
+  } catch (error: any) {
+    if (error.code === 'P2002') {
+      // Prisma devuelve en error.meta.target qué campo causó el conflicto
+      const campo = error.meta?.target?.[0];
+
+      if (campo === 'telefono') {
+        res.status(409).json({
+          error: 'TELEFONO_EXISTENTE',
+          mensaje: 'El número de teléfono ya está en uso.'
+        });
+        return;
+      }
+
+      if (campo === 'ci') {
+        res.status(409).json({
+          error: 'CI_EXISTENTE',
+          mensaje: 'El número de CI ya está registrado.'
+        });
+        return;
+      }
+    }
     res.status(500).json({
       error: 'ERROR_SERVIDOR',
       mensaje: 'Error interno del servidor. Intente nuevamente.'
@@ -159,7 +182,7 @@ export const actualizarUsuario = async (req: Request, res: Response) => {
   //console.log('Body recibido:', req.body);
 
   const { idUsuario } = req.params;
-  const { nombre, apellidos, telefono, usuario, rolesIds = [], estadosRoles = {} } = req.body;
+  const { nombre, apellidos, telefono, usuario, rolesIds = [], estadosRoles = {}, ci, contraseña } = req.body;
 
   try {
     // Asegurar que siempre se incluya Socio
@@ -196,11 +219,39 @@ export const actualizarUsuario = async (req: Request, res: Response) => {
       return;
     }
 
+    //Validad Ci
+    if (ci.trim() === "") {
+      res.status(400).json({
+        error: 'CI_INVALIDO',
+        mensaje: "El Ci no puede ser vacio"
+      });
+      return;
+    }
+
+    //Validar contraseña si es nuevo se actualiza y no se deja como estaba
+    let nuevaContraseña = undefined;
+    if (contraseña && contraseña.trim() !== '') {
+      nuevaContraseña = await bcrypt.hash(contraseña.trim(), 10);
+    }
+
     //  Actualizar datos básicos del usuario
     const usuarioMinuscula = usuario.trim().toLowerCase();
+    const dataUpdate: any = {
+      nombre,
+      apellidos,
+      telefono,
+      ci,
+      usuario: usuarioMinuscula,
+    };
+
+    // Si hay nueva contraseña, la incluimos en el update
+    if (nuevaContraseña) {
+      dataUpdate.contraseña = nuevaContraseña;
+    }
+
     const usuarioActualizado = await prisma.usuario.update({
       where: { idUsuario: Number(idUsuario) },
-      data: { nombre, apellidos, telefono, ci: "", usuario: usuarioMinuscula },
+      data: dataUpdate,
     });
 
     //Obtener los roles actuales del usuario
@@ -245,6 +296,7 @@ export const actualizarUsuario = async (req: Request, res: Response) => {
       apellidos: usuarioActualizado.apellidos,
       telefono: usuarioActualizado.telefono,
       usuario: usuarioActualizado.usuario,
+      ci: usuarioActualizado.ci,
       roles: rolesActualizados.map((ur) => ({
         idRol: ur.rol.idRol,
         nombreRol: ur.rol.nombreRol,
@@ -256,15 +308,28 @@ export const actualizarUsuario = async (req: Request, res: Response) => {
 
     res.json(resultado);
   } catch (error: any) {
-    if (error.code === 'P2002' && error.meta?.target?.includes('usuario')) {
-      // Error de unicidad en el campo 'usuario'
-      res.status(409).json({
-        error: 'USUARIO_EXISTENTE',
-        mensaje: 'El nombre de usuario ya está en uso.'
-      });
-    } else {
-      //console.error("Error al actualizar usuario:", error);
-      res.status(500).json({ mensaje: "Error al actualizar usuario" });
+    if (error.code === 'P2002') {
+      // Prisma devuelve en error.meta.target qué campo causó el conflicto
+      const campo = error.meta?.target?.[0];
+
+      if (campo === 'usuario') {
+        res.status(409).json({
+          error: 'USUARIO_EXISTENTE',
+          mensaje: 'El nombre de usuario ya está en uso.'
+        });
+        return;
+      }
+
+      if (campo === 'ci') {
+        res.status(409).json({
+          error: 'CI_EXISTENTE',
+          mensaje: 'El número de CI ya está registrado.'
+        });
+        return;
+      }
     }
+
+    console.error('Error al actualizar usuario:', error);
+    res.status(500).json({ mensaje: 'Error al actualizar usuario' });
   }
 };
