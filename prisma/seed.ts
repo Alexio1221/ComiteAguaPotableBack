@@ -61,6 +61,7 @@ async function main() {
       { idRol: 1, nombreFuncion: "Asistencia", icono: "UserRoundCheck" },
       { idRol: 1, nombreFuncion: "Usuarios", icono: "Users" },
       { idRol: 1, nombreFuncion: "Medidores", icono: "Gauge" },
+      { idRol: 1, nombreFuncion: "Categorias", icono: "ChartSpline" },
       { idRol: 1, nombreFuncion: "Reportes", icono: "BarChart" },
       { idRol: 1, nombreFuncion: "Incidencias", icono: "AlertTriangle" },
       { idRol: 1, nombreFuncion: "Avisos", icono: "Bell" },
