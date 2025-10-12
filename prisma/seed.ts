@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
@@ -55,6 +55,41 @@ async function main() {
     skipDuplicates: true,
   });
 
+  // Categorias
+  await prisma.categoria.createMany({
+    data: [
+      {
+        tipo: 'Doméstico',
+        tarifa: new Prisma.Decimal(10.00),
+        tarifaAdicional: new Prisma.Decimal(2.00),
+        limiteBasico: new Prisma.Decimal(15.00),
+        descripcion: 'Categoría para uso doméstico',
+      },
+      {
+        tipo: 'Comercial',
+        tarifa: new Prisma.Decimal(20.00),
+        tarifaAdicional: new Prisma.Decimal(3.50),
+        limiteBasico: new Prisma.Decimal(20.00),
+        descripcion: 'Categoría para negocios y comercios',
+      },
+      {
+        tipo: 'Institucional',
+        tarifa: new Prisma.Decimal(25.00),
+        tarifaAdicional: new Prisma.Decimal(4.00),
+        limiteBasico: new Prisma.Decimal(25.00),
+        descripcion: 'Categoría para instituciones públicas o privadas',
+      },
+      {
+        tipo: 'Industrial',
+        tarifa: new Prisma.Decimal(30.00),
+        tarifaAdicional: new Prisma.Decimal(4.50),
+        limiteBasico: new Prisma.Decimal(30.00),
+        descripcion: 'Categoría para industrias y fábricas',
+      },
+    ],
+    skipDuplicates: true,
+  })
+  
   // === Funciones ===
   await prisma.funcion.createMany({
     data: [

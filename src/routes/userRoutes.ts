@@ -1,13 +1,13 @@
 // src/routes/auth.ts
 import { Router } from 'express';
 import { registrarUsuario, actualizarUsuario } from '../controllers/usuarios/registrarUsuario';
-import { obtenerFuncionesPorRol, obtenerRolesUsuarioActual } from '../controllers/roles/funcionesController';
+import { obtenerFuncionesPorRol, obtenerRolesUsuarioActual } from '../controllers/config/funcionesController';
 import { obtenerRolActual, actualizarRolActual } from '../controllers/usuarios/sesionController';
 import { obtenerUsuarios } from '../controllers/usuarios/usuariosController';
-import { obtenerRoles } from '../controllers/roles/rolesController';
+import { obtenerRoles } from '../controllers/config/rolesController';
 import { obtenerCodigo, verificarCodigo } from '../controllers/telegram/passwordController';
 import {autenticar} from '../middlewar/autenticacion'
-import { obtenerCategorias } from '../controllers/roles/categoriasController';
+import { obtenerCategorias } from '../controllers/config/categoriasController';
 
 const router = Router();
 
@@ -21,6 +21,5 @@ router.put('/usuario/:idUsuario', actualizarUsuario);  //Actualiza la informacio
 router.get('/roles', obtenerRoles);   //obtiene todos los roles
 router.post("/recuperar-codigo", obtenerCodigo);    //Obtener codigo para recuperar la contraseña
 router.post("/verificar-codigo", verificarCodigo);  //Verificar codigo recibido
-router.get('/categorias', obtenerCategorias)
 
 export default router;
