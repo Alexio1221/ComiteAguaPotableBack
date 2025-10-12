@@ -7,21 +7,23 @@ import path from 'path'
 export const crearReunion = async (req: Request, res: Response) => {
     try {
         const { tipo, fecha, hora, lugar, motivo, descripcion } = req.body
-        const documentoAsamblea = req.file ? `/uploads/asambleas/${req.file.filename}` : null 
+        const documentoAsamblea = req.file ? `/uploads/asambleas/${req.file.filename}` : null
 
-        // Validaciones básicas
         if (!tipo || !fecha || !hora || !lugar || !motivo || !descripcion) {
             res.status(400).json({ message: 'Todos los campos obligatorios deben completarse.' });
             return;
         }
-
-        // Convertir fecha a Date 
-        const fechaReunion = new Date(fecha)
+        // Validación de fecha
+        const hoy = new Date().toISOString().split('T')[0]
+        if (fecha < hoy) {
+            res.status(400).json({ mensaje: 'La fecha de vigencia no puede ser anterior al día actual' });
+            return;
+        }
 
         const nuevaReunion = await prisma.reunion.create({
             data: {
                 tipo,
-                fecha: fechaReunion,
+                fecha: new Date(fecha),
                 hora,
                 lugar,
                 motivo,

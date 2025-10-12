@@ -16,8 +16,8 @@ export const crearAvisoNoticia = async (req: Request, res: Response) => {
 
     // Validación de fecha
     const hoy = new Date().toISOString().split('T')[0]
-    if (fechaVigencia <= hoy) {
-      res.status(400).json({ mensaje: 'La fecha de vigencia debe ser posterior al día actual.' });
+    if (fechaVigencia < hoy) {
+      res.status(400).json({ mensaje: 'La fecha de vigencia no puede ser anterior al día actual' });
       return;
     }
 
