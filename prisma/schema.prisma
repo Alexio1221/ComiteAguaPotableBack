@@ -25,6 +25,7 @@ model Usuario {
   recuperaciones Recuperacion[]
   medidores    Medidor[]
   asistencias  Asistencia[]
+  comprobabantes Comprobante[]
 }
 
 model Rol {
@@ -86,6 +87,7 @@ model Medidor {
   categoria    Categoria @relation(fields: [idCategoria], references: [idCategoria])
   socio        Usuario   @relation(fields: [idSocio], references: [idUsuario])
   ubicacionSocio UbicacionSocio?
+  lecturas Lectura[]
 }
 
 model Categoria {
@@ -142,9 +144,64 @@ model Asistencia {
   @@id([idReunion, idUsuario])
 }
 
+model Lectura {
+  idLectura        Int       @id @default(autoincrement())
+  idMedidor        Int
+  lecturaActual    Decimal   @default(0)
+  lecturaAnterior  Decimal   @default(0)
+  consumo          Decimal
+  fechaLectura     DateTime   @default(now())
+  observacion      String?
+  estado           EstadoLectura @default(PENDIENTE)
 
+  medidor          Medidor    @relation(fields: [idMedidor], references: [idMedidor])
+  comprobante      Comprobante?
+}
+
+model Comprobante {
+  idComprobante   Int       @id @default(autoincrement())
+  idLectura       Int       @unique
+  idUsuario       Int
+  fechaEmision    DateTime  @default(now())
+  montoBasico     Decimal
+  montoAdicional  Decimal
+  moraAcumulada   Decimal   @default(0)
+  totalPagar      Decimal
+  estadoPago      EstadoPago @default(PENDIENTE)
+  fechaLimite     DateTime
+  fechaPago       DateTime?
+
+  lectura         Lectura   @relation(fields: [idLectura], references: [idLectura])
+  usuario         Usuario   @relation(fields: [idUsuario], references: [idUsuario])
+  pagos           Pago[]
+}
+
+model Pago {
+  idPago        Int       @id @default(autoincrement())
+  idComprobante Int
+  montoPagado   Decimal
+  fechaPago     DateTime  @default(now())
+  metodoPago    String    
+  comprobanteArchivo String? 
+
+  comprobante   Comprobante @relation(fields: [idComprobante], references: [idComprobante])
+}
+
+//Para el medidor
 enum Estado {
   ACTIVO
   INACTIVO
   SUSPENDIDO
+}
+
+enum EstadoLectura {
+  PENDIENTE
+  PAGADO
+  VENCIDO
+}
+
+enum EstadoPago {
+  PENDIENTE
+  PAGADO
+  VENCIDO
 }

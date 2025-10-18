@@ -16,14 +16,18 @@ export const crearReunion = async (req: Request, res: Response) => {
         // Validación de fecha
         const hoy = new Date().toISOString().split('T')[0]
         if (fecha < hoy) {
-            res.status(400).json({ mensaje: 'La fecha de vigencia no puede ser anterior al día actual' });
+            res.status(400).json({ mensaje: 'No se pueden crear reuniones para hoy después de las 20:00' });
             return;
         }
+
+        const fechaYhora = new Date(fecha)
+        const [horaNum, minutoNum] = hora.split(':').map(Number);
+        fechaYhora.setHours(horaNum, minutoNum, 0, 0);
 
         const nuevaReunion = await prisma.reunion.create({
             data: {
                 tipo,
-                fecha: new Date(fecha),
+                fecha: fechaYhora,
                 hora,
                 lugar,
                 motivo,
@@ -42,10 +46,16 @@ export const crearReunion = async (req: Request, res: Response) => {
 // Obtener reuniones vigentes (fecha >= hoy)
 export const obtenerReunionesVigentes = async (_req: Request, res: Response) => {
     try {
-        const hoy = new Date()
+        const hoy = new Date();
+        hoy.setUTCHours(0, 0, 0, 0); // medianoche UTC
+        //console.log("Local:", hoy.toString());  horario utc-4 bolivia
+        //console.log("UTC:", hoy.toISOString());   horario gloval utc
         const reuniones = await prisma.reunion.findMany({
             where: { fecha: { gte: hoy } },
-            orderBy: { fecha: 'asc' },
+            orderBy: [
+                { fecha: 'asc' },
+                { hora: 'asc' }
+            ],
         })
 
         res.status(200).json(reuniones)
