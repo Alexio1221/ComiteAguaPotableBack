@@ -16,11 +16,13 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-  origin: 'http://localhost:3000', // dirección de tu frontend Next.js
+  origin: 'http://192.168.100.87:3000', // dirección de tu frontend Next.js
   credentials: true, // necesario para enviar y recibir cookies
 }));
 
-const PORT = process.env.PORT || 5000;
+//const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT ? Number(process.env.PORT) : 5000;
+
 app.use(express.json());
 app.use(cookieParser());
 
@@ -39,9 +41,14 @@ app.get('/', (_req, res) => {
 });
 
 /*Local*/ 
-app.listen(PORT, () => {
+/*app.listen(PORT, () => {
   console.log(`Servidor escuchando en http://localhost:${PORT}`);
+});*/
+//Celular
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Servidor escuchando en http://0.0.0.0:${PORT}`);
 });
+
 /*Network
 app.listen(5000, "0.0.0.0", () => {
   console.log("Servidor escuchando en http://0.0.0.0:5000");

@@ -4,7 +4,7 @@ import prisma from '../../config/client'
 // Obtener todos los medidores con socio y su ubicación
 export const obtenerUbicacionesMedidores = async (req: Request, res: Response) => {
   const idMedidorActual = Number(req.params.idMedidorActual)
-  console.log(idMedidorActual)
+  //console.log(idMedidorActual)
   try {
     const medidores = await prisma.medidor.findMany({
       where: idMedidorActual

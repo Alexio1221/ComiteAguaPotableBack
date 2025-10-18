@@ -180,8 +180,7 @@ model Pago {
   idPago        Int       @id @default(autoincrement())
   idComprobante Int
   montoPagado   Decimal
-  fechaPago     DateTime  @default(now())
-  metodoPago    String    
+  fechaPago     DateTime  @default(now())  
   comprobanteArchivo String? 
 
   comprobante   Comprobante @relation(fields: [idComprobante], references: [idComprobante])
