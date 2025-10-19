@@ -42,7 +42,7 @@ export const iniciarSesion = async (req: Request<{}, any, LoginBody>, res: Respo
 
     // Generar token JWT
     const token = generarToken({
-      id: usuarioEncontrado.idUsuario,
+      idUsuario: usuarioEncontrado.idUsuario,
       usuario: usuarioEncontrado.usuario
     });
 
@@ -72,7 +72,7 @@ export const iniciarSesion = async (req: Request<{}, any, LoginBody>, res: Respo
         idUsuario: usuarioEncontrado.idUsuario,
         usuario: usuarioEncontrado.usuario,
         nombre: usuarioEncontrado.nombre,
-        apellido: usuarioEncontrado.apellido,
+        apellido: usuarioEncontrado.apellidos,
       }
     });
 

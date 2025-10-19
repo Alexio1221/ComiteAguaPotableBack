@@ -149,9 +149,9 @@ model Lectura {
   idMedidor        Int
   lecturaActual    Decimal   @default(0)
   lecturaAnterior  Decimal   @default(0)
-  consumo          Decimal
+  consumo          Decimal   @default(0)
   fechaLectura     DateTime   @default(now())
-  observacion      String?
+  observaciones      String?
   estado           EstadoLectura @default(PENDIENTE)
 
   medidor          Medidor    @relation(fields: [idMedidor], references: [idMedidor])
@@ -161,7 +161,7 @@ model Lectura {
 model Comprobante {
   idComprobante   Int       @id @default(autoincrement())
   idLectura       Int       @unique
-  idUsuario       Int
+  idOperador       Int
   fechaEmision    DateTime  @default(now())
   montoBasico     Decimal
   montoAdicional  Decimal
@@ -172,7 +172,7 @@ model Comprobante {
   fechaPago       DateTime?
 
   lectura         Lectura   @relation(fields: [idLectura], references: [idLectura])
-  usuario         Usuario   @relation(fields: [idUsuario], references: [idUsuario])
+  usuario         Usuario   @relation(fields: [idOperador], references: [idUsuario])
   pagos           Pago[]
 }
 
@@ -194,9 +194,8 @@ enum Estado {
 }
 
 enum EstadoLectura {
+  REGISTRADO
   PENDIENTE
-  PAGADO
-  VENCIDO
 }
 
 enum EstadoPago {

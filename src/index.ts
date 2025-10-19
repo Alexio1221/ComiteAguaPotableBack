@@ -16,7 +16,8 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-  origin: 'http://192.168.100.87:3000', // dirección de tu frontend Next.js
+  origin: 'http://192.168.100.87:3000', 
+  //origin: 'http://localhost:3000',
   credentials: true, // necesario para enviar y recibir cookies
 }));
 
