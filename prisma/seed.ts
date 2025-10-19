@@ -1,5 +1,7 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { mainMedidores } from "./medidores";
+import { mainLecturas } from "./lecturasYcomprobantes";
 
 const prisma = new PrismaClient();
 
@@ -124,6 +126,9 @@ async function main() {
     ],
     skipDuplicates: true,
   });
+
+  await mainMedidores();
+  await mainLecturas();
 }
 
 main()

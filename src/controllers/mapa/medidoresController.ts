@@ -160,6 +160,22 @@ export const actualizarMedidor = async (req: Request, res: Response) => {
       res.status(404).json({ mensaje: 'Medidor no encontrado.' })
       return
     }
+    //Bloquear si se quiere cambiar el estado del medidor pero tiene lecturas pendientes
+    if (estado === 'INACTIVO' || estado === 'SUSPENDIDO') {
+      const lecturaPendiente = await prisma.lectura.findFirst({
+        where: {
+          idMedidor,
+          estado: 'PENDIENTE',
+        },
+      });
+
+      if (lecturaPendiente) {
+        res.status(400).json({
+          mensaje: 'No se puede desactivar el medidor porque tiene una lectura pendiente.',
+        });
+        return;
+      }
+    }
 
     // Actualizar datos del medidor
     const medidorActualizado = await prisma.medidor.update({
