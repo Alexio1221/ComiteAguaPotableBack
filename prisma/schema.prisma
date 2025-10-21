@@ -162,6 +162,7 @@ model Comprobante {
   idComprobante   Int       @id @default(autoincrement())
   idLectura       Int       @unique
   idOperador       Int
+  idPago          Int?
   fechaEmision    DateTime  @default(now())
   montoBasico     Decimal
   montoAdicional  Decimal
@@ -169,21 +170,19 @@ model Comprobante {
   totalPagar      Decimal
   estadoPago      EstadoPago @default(PENDIENTE)
   fechaLimite     DateTime
-  fechaPago       DateTime?
 
   lectura         Lectura   @relation(fields: [idLectura], references: [idLectura])
   usuario         Usuario   @relation(fields: [idOperador], references: [idUsuario])
-  pagos           Pago[]
+  pago            Pago?     @relation(fields: [idPago], references: [idPago])
 }
 
 model Pago {
   idPago        Int       @id @default(autoincrement())
-  idComprobante Int
   montoPagado   Decimal
   fechaPago     DateTime  @default(now())  
   comprobanteArchivo String? 
 
-  comprobante   Comprobante @relation(fields: [idComprobante], references: [idComprobante])
+  comprobantes   Comprobante[]
 }
 
 //Para el medidor
