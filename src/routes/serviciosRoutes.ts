@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { registrarCategoria, obtenerCategorias, editarCategoria, eliminarCategoria } from '../controllers/config/categoriasController';
 import { obtenerMedidoresLectura, registrarLectura, crearLecturasPendientes } from '../controllers/operador/lecturasController'
 import { obtenerComprobantesSocio } from '../controllers/cajero/comprobantesController';
+import { registrarPago } from '../controllers/cajero/pagosController';
 import { autenticar } from '../middlewar/autenticacion';
 
 
@@ -18,7 +19,8 @@ router.post('/lecturas', autenticar, registrarLectura)  //Registra una nueva lec
 
 
 //Comprobantes Cajero
-router.get('/comprobantes/:idUsuario', obtenerComprobantesSocio);
+router.get('/comprobantes/:idUsuario', autenticar, obtenerComprobantesSocio);
+router.post('/pagos', autenticar, registrarPago);
 
 
 export default router;

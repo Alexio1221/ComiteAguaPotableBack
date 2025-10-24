@@ -11,3 +11,19 @@ export interface RegistroBody {
   estadosRoles: Record<string, boolean>;
 }
 
+export interface Medidor {
+  idMedidor: number;
+  ubicacionSocio?: {
+    direccion?: string;
+  };
+}
+
+export interface Lectura {
+  medidor: Medidor;
+}
+
+export interface Comprobante {
+  idComprobante: number;
+  totalPagar: number;
+  lectura: Lectura;
+}
