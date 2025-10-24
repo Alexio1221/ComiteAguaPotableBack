@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { registrarCategoria, obtenerCategorias, editarCategoria, eliminarCategoria } from '../controllers/config/categoriasController';
 import { obtenerMedidoresLectura, registrarLectura, crearLecturasPendientes } from '../controllers/operador/lecturasController'
+import { obtenerComprobantesSocio } from '../controllers/cajero/comprobantesController';
 import { autenticar } from '../middlewar/autenticacion';
 
 
@@ -11,7 +12,13 @@ router.get('/categorias', obtenerCategorias)  //Obtiene todas las categorias
 router.put('/categoria/:id', editarCategoria)  //Edita la categoria por el id
 router.delete('/categoria/:id', eliminarCategoria)  //Elimina la categoria por el 
 
-//Lecturas
+//Lecturas Operador
 router.get('/medidores', crearLecturasPendientes, obtenerMedidoresLectura) //Se usa para obtener los medidores activos para su lectura
 router.post('/lecturas', autenticar, registrarLectura)  //Registra una nueva lectura y crea el comprobante asociado
+
+
+//Comprobantes Cajero
+router.get('/comprobantes/:idUsuario', obtenerComprobantesSocio);
+
+
 export default router;
