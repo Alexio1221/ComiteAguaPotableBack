@@ -135,8 +135,9 @@ model Reunion {
 model Asistencia {
   idReunion Int
   idUsuario Int
-  estado    Boolean   @default(false) // true = asistió
-  registradoEn DateTime @default(now()) // cuando marcó asistencia
+  estado    EstadoAsistencia @default(AUSENTE)
+  registradoEn DateTime // cuando marcó asistencia
+  observacion String?  // en casos de tener una justificacion
 
   reunion   Reunion @relation(fields: [idReunion], references: [idReunion])
   usuario   Usuario @relation(fields: [idUsuario], references: [idUsuario])
@@ -183,6 +184,13 @@ model Pago {
   comprobanteArchivo String? 
 
   comprobantes   Comprobante[]
+}
+
+enum EstadoAsistencia {
+  PRESENTE
+  RETRASO
+  AUSENTE
+  JUSTIFICADO
 }
 
 //Para el medidor

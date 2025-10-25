@@ -15,19 +15,16 @@ export const crearReunion = async (req: Request, res: Response) => {
         }
         // Validación de fecha
         const hoy = new Date().toISOString().split('T')[0]
+        
         if (fecha < hoy) {
             res.status(400).json({ mensaje: 'No se pueden crear reuniones para hoy después de las 20:00' });
             return;
         }
 
-        const fechaYhora = new Date(fecha)
-        const [horaNum, minutoNum] = hora.split(':').map(Number);
-        fechaYhora.setHours(horaNum, minutoNum, 0, 0);
-
         const nuevaReunion = await prisma.reunion.create({
             data: {
                 tipo,
-                fecha: fechaYhora,
+                fecha: new Date(fecha),
                 hora,
                 lugar,
                 motivo,
