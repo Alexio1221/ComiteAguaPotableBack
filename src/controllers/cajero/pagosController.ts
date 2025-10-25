@@ -1,42 +1,47 @@
 import { Request, Response } from 'express';
 import prisma from '../../config/client';
+import { generarComprobantePDF } from '../../utils/generarComprobantes';
 
 export const registrarPago = async (req: Request, res: Response) => {
     try {
         const { comprobantes } = req.body;
 
         if (!comprobantes?.length) {
-            res.status(400).json({ mensaje: "No se enviaron comprobantes para pagar" });
-            return
+            return res.status(400).json({ mensaje: "No se enviaron comprobantes para pagar" });
         }
 
-        // Obtener el total a pagar sumando los comprobantes
         const comprobantesData = await prisma.comprobante.findMany({
             where: { idComprobante: { in: comprobantes } },
-            select: { totalPagar: true },
+            include: {
+                lectura: {
+                    select: {
+                        medidor: {
+                            select: {
+                                idMedidor: true,
+                                ubicacionSocio: { select: { direccion: true } }
+                            }
+                        }
+                    }
+                }
+            }
         });
 
         if (comprobantesData.length === 0) {
-            res.status(404).json({ mensaje: "No se encontraron los comprobantes" });
-            return
+            return res.status(404).json({ mensaje: "No se encontraron los comprobantes" });
         }
 
-        console.log(comprobantesData);
-
-
+        // Calcular monto total
         const montoTotal = comprobantesData.reduce(
-            (sumaAcumulada, comprobante) => sumaAcumulada + Number(comprobante.totalPagar),
+            (suma, c) => suma + Number(c.totalPagar),
             0
         );
 
-        // Crear el registro de pago
+        // Crear registro de pago
         const nuevoPago = await prisma.pago.create({
-            data: {
-                montoPagado: montoTotal,
-            },
+            data: { montoPagado: montoTotal },
         });
 
-        // Actualizar los comprobantes y asociarlos al pago
+        // Actualizar los comprobantes como PAGADO y asociarlos al pago
         await prisma.comprobante.updateMany({
             where: { idComprobante: { in: comprobantes } },
             data: {
@@ -45,13 +50,36 @@ export const registrarPago = async (req: Request, res: Response) => {
             },
         });
 
-        res.json({
-            mensaje: "Pago registrado con éxito",
+        // Generar PDF con datos completos
+        const pdfPath = generarComprobantePDF({
             idPago: nuevoPago.idPago,
+            fechaPago: nuevoPago.fechaPago,
             montoPagado: montoTotal,
+            comprobantesPagados: comprobantesData.map(c => ({
+                idComprobante: c.idComprobante,
+                montoBasico: Number(c.montoBasico),
+                montoAdicional: Number(c.montoAdicional),
+                moraAcumulada: Number(c.moraAcumulada),
+                totalPagar: Number(c.totalPagar),
+                idMedidor: c.lectura?.medidor?.idMedidor || 0,
+                direccion: c.lectura?.medidor?.ubicacionSocio?.direccion,
+                fechaEmision: c.fechaEmision,
+                fechaLimite: c.fechaLimite,
+            }))
         });
+
+        await prisma.pago.update({
+            where: { idPago: nuevoPago.idPago },
+            data: { comprobanteArchivo: pdfPath },
+        });
+
+        return res.json({
+            mensaje: "Pago registrado con éxito",
+            rutaComprobante: pdfPath
+        });
+
     } catch (error) {
         console.error("Error al registrar pago:", error);
-        res.status(500).json({ mensaje: "Error interno del servidor" });
+        return res.status(500).json({ mensaje: "Error interno del servidor" });
     }
 };

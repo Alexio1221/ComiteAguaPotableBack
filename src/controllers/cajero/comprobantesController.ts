@@ -10,9 +10,10 @@ export const obtenerComprobantesSocio = async (req: Request, res: Response) => {
             return
         }
 
-        // 🔹 Buscar comprobantes del socio a través de la relación: Usuario → Medidor → Lectura → Comprobante
+        // Buscar comprobantes del socio a través de la relación: Usuario → Medidor → Lectura → Comprobante
         const comprobantes = await prisma.comprobante.findMany({
             where: {
+                estadoPago: "PENDIENTE",
                 lectura: {
                     medidor: {
                         socio: {
