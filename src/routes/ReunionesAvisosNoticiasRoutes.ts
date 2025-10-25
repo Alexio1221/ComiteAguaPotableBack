@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { crearAvisoNoticia, obtenerAvisoNoticias, eliminarAvisoNoticia } from '../controllers/ReunionesAvisosNoticias/avisosNoticiasController'
 import {cargarAvisosNoticias, cargarDocumentosAsamblea } from '../middlewar/cargarAvisosNoticias' 
-import { crearReunion, obtenerReunionesVigentes, eliminarReunion} from '../controllers/ReunionesAvisosNoticias/reunionesController'
+import { crearReunion, obtenerReunionesVigentes, eliminarReunion, obtenerReunionesHoy} from '../controllers/ReunionesAvisosNoticias/reunionesController'
 
 const router = Router()
 
@@ -14,6 +14,7 @@ router.delete('/:id', eliminarAvisoNoticia)    // Eliminar aviso por ID
 // Reuniones
 router.post('/reunion', cargarDocumentosAsamblea.single('documentoAsamblea'), crearReunion)    //subir reunion
 router.get('/reunion', obtenerReunionesVigentes)      // Listar reuniones vigentes
+router.get('/reuniones/hoy', obtenerReunionesHoy)      // Listar reuniones de hoy o mas proximo
 router.delete('/reunion/:id', eliminarReunion)        // Eliminar reunión por ID
 
 export default router

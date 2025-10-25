@@ -91,3 +91,62 @@ export const eliminarReunion = async (req: Request, res: Response) => {
         res.status(500).json({ message: 'Error al eliminar la reunión.' })
     }
 }
+
+// Obtener reuniones de hoy o la más próxima
+export const obtenerReunionesHoy = async (_req: Request, res: Response) => {
+    try {
+        // Fecha actual (hora local Bolivia, UTC-4)
+        const ahora = new Date();
+        const inicioHoy = new Date(ahora);
+        inicioHoy.setHours(0, 0, 0, 0);
+        const finHoy = new Date(ahora);
+        finHoy.setHours(23, 59, 59, 999);
+
+        // Buscar reuniones que sean hoy
+        const reunionesHoy = await prisma.reunion.findMany({
+            where: {
+                fecha: {
+                    gte: inicioHoy,
+                    lte: finHoy,
+                },
+            },
+            orderBy: [
+                { fecha: 'asc' },
+                { hora: 'asc' },
+            ],
+        });
+
+        // Si hay reuniones hoy, devolverlas
+        if (reunionesHoy.length > 0) {
+            res.status(200).json({
+                tipo: 'hoy',
+                reuniones: reunionesHoy,
+            });
+            return;
+        }
+
+        // Si no hay reuniones hoy, buscar la más próxima
+        const proxima = await prisma.reunion.findFirst({
+            where: { fecha: { gt: finHoy } },
+            orderBy: [
+                { fecha: 'asc' },
+                { hora: 'asc' },
+            ],
+        });
+
+        if (proxima) {
+            res.status(200).json({
+                tipo: 'proxima',
+                reuniones: [proxima],
+            });
+        } else {
+            res.status(200).json({
+                tipo: 'ninguna',
+                reuniones: [],
+            });
+        }
+    } catch (error) {
+        console.error('Error al obtener reuniones de hoy:', error);
+        res.status(500).json({ message: 'Error al obtener las reuniones de hoy o la próxima.' });
+    }
+};
