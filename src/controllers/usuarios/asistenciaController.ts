@@ -3,26 +3,40 @@ import prisma from '../../config/client';
 
 export const registrarAsistencia = async (req: Request, res: Response) => {
     try {
-        const { idReunion, idUsuario, estado, observacion } = req.body;
+        const { idReunion, idUsuario, estado, observacion, cambioTabla } = req.body;
+        console.log(req.body)
 
         if (!idReunion || !idUsuario || !estado) {
             res.status(400).json({ mensaje: 'Faltan datos requeridos' });
             return
         }
 
-        const usuarioRegistradoHoy = await prisma.asistencia.findFirst({
-            where: {
-                idReunion: Number(idReunion),
-                idUsuario: Number(idUsuario),
-                NOT: {
-                    estado: 'AUSENTE', // cualquier estado distinto de AUSENTE
-                },
-            },
-        })
+        if (estado === 'JUSTIFICADO' && (!observacion || observacion.trim() === '')) {
+            res.status(400).json({ mensaje: 'Debe ingresar una observación para el estado Justificado.' });
+            return;
+        }
 
-        if (usuarioRegistradoHoy) {
-            res.status(404).json({ mensaje: 'Ya esta registrado' });
-            return
+        let mensajeUsuario = 'Asistencia retirada con éxito.'
+        if (cambioTabla === true) {
+            mensajeUsuario = 'Asistencia registrada con éxito.'
+        }
+
+        if (cambioTabla === undefined) {
+            const usuarioRegistradoHoy = await prisma.asistencia.findFirst({
+                where: {
+                    idReunion: Number(idReunion),
+                    idUsuario: Number(idUsuario),
+                    NOT: {
+                        estado: 'AUSENTE', // cualquier estado distinto de AUSENTE
+                    },
+                },
+            })
+
+            if (usuarioRegistradoHoy) {
+                res.status(404).json({ mensaje: 'Ya esta registrado' });
+                return
+            }
+            mensajeUsuario = 'Asistencia registrada con éxito'
         }
 
         const asistencia = await prisma.asistencia.update({
@@ -39,7 +53,8 @@ export const registrarAsistencia = async (req: Request, res: Response) => {
             },
         });
 
-        res.json({ mensaje: 'Asistencia registrada con éxito' });
+        console.log(mensajeUsuario)
+        res.json({ mensaje: mensajeUsuario });
     } catch (error: any) {
         console.error(error);
         if (error.code === 'P2025') {
@@ -83,3 +98,45 @@ export const generarRegistrosAsistencia = async (req: Request, res: Response) =>
     }
 };
 
+export const obtenerListaDeSocios = async (req: Request, res: Response) => {
+    try {
+        const reunion = await prisma.reunion.findFirst({
+            where: { estado: 'EN_PROCESO' },
+            orderBy: { fechaReunion: 'desc' },
+        });
+
+        if (!reunion) {
+            res.status(404).json({ error: 'No hay una reunión en proceso' })
+            return
+        }
+
+        const listaReunion = await prisma.asistencia.findMany({
+            where: { idReunion: reunion.idReunion },
+            select: {
+                idUsuario: true,
+                estado: true,
+                usuario: {
+                    select: {
+                        nombre: true,
+                        apellidos: true,
+                    },
+                },
+            },
+            orderBy: {
+                idUsuario: 'asc',
+            },
+        })
+
+        const lista = listaReunion.map((list) => ({
+            idUsuario: list.idUsuario,
+            nombre: list.usuario.nombre,
+            apellidos: list.usuario.apellidos,
+            presente: list.estado === 'AUSENTE' ? false : true   //para el checkbox
+        }))
+
+        res.json({ lista })
+    } catch (error) {
+        console.error('Error al generar lista:', error);
+        res.status(500).json({ mensaje: 'Error al obtener la lista de asistencia' });
+    }
+}

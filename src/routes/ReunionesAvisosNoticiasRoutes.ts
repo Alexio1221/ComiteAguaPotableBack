@@ -2,7 +2,7 @@ import { Router } from 'express'
 import { crearAvisoNoticia, obtenerAvisoNoticias, eliminarAvisoNoticia } from '../controllers/ReunionesAvisosNoticias/avisosNoticiasController'
 import {cargarAvisosNoticias, cargarDocumentosAsamblea } from '../middlewar/cargarAvisosNoticias' 
 import { crearReunion, obtenerReunionesVigentes, eliminarReunion, obtenerReunionesHoy, actualizarEstadoReunion } from '../controllers/ReunionesAvisosNoticias/reunionesController'
-import { registrarAsistencia, generarRegistrosAsistencia } from '../controllers/usuarios/asistenciaController';
+import { registrarAsistencia, generarRegistrosAsistencia, obtenerListaDeSocios } from '../controllers/usuarios/asistenciaController';
 
 const router = Router()
 
@@ -22,5 +22,6 @@ router.delete('/reunion/:id', eliminarReunion)        // Eliminar reunión por I
 //asistencia reuniones usuario
 router.post('/asistencia/registrar', registrarAsistencia);  //Registramos la asistencia de cada socio
 router.post('/asistencia/generar', generarRegistrosAsistencia);  //Generamos los registros con la reunion en proceso
+router.get('/asistencia/datos', obtenerListaDeSocios);   //Obtenemos la lista de los socios de la reunion actual
 
 export default router
