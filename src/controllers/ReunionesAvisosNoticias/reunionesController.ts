@@ -13,19 +13,45 @@ export const crearReunion = async (req: Request, res: Response) => {
             res.status(400).json({ message: 'Todos los campos obligatorios deben completarse.' });
             return;
         }
-        // Validación de fecha
-        const hoy = new Date().toISOString().split('T')[0]
-        
-        if (fecha < hoy) {
-            res.status(400).json({ mensaje: 'No se pueden crear reuniones para hoy después de las 20:00' });
+        const [h, m] = hora.split(':').map(Number)
+        const fechaReunion = new Date(fecha)
+        fechaReunion.setUTCHours(23, 59, 59) //final del dia utc
+        fechaReunion.setHours(h, m, 0)  //ponemos la hora en la fecha utc
+
+        const hoy = new Date()
+
+        if (fechaReunion.getTime() < hoy.getTime()) {
+            res.status(400).json({ mensaje: 'La hora seleccionada ya ha pasado. Selecciona una fecha y hora posteriores a la actual.' });
             return;
+        }
+
+        const inicioDelDia = new Date(fecha)
+        inicioDelDia.setUTCHours(4, 0, 1, 0) // sumamos 4 hora para bolivia
+
+        const finDelDia = new Date(fecha)
+        finDelDia.setUTCHours(27, 59, 59)  //sumamos 4 hora para bolivia
+
+
+        const buscarReunion = await prisma.reunion.findFirst({
+            where: {
+                fechaReunion: {
+                    gte: inicioDelDia,
+                    lte: finDelDia,
+                },
+            },
+        })
+
+        if (buscarReunion) {
+            res.status(400).json({
+                mensaje: 'Ya existe una reunión registrada para ese día.',
+            })
+            return
         }
 
         const nuevaReunion = await prisma.reunion.create({
             data: {
                 tipo,
-                fecha: new Date(fecha),
-                hora,
+                fechaReunion,
                 lugar,
                 motivo,
                 descripcion,
@@ -40,27 +66,23 @@ export const crearReunion = async (req: Request, res: Response) => {
     }
 }
 
-// Obtener reuniones vigentes (fecha >= hoy)
 export const obtenerReunionesVigentes = async (_req: Request, res: Response) => {
     try {
-        const hoy = new Date();
-        hoy.setUTCHours(0, 0, 0, 0); // medianoche UTC
-        //console.log("Local:", hoy.toString());  horario utc-4 bolivia
-        //console.log("UTC:", hoy.toISOString());   horario gloval utc
         const reuniones = await prisma.reunion.findMany({
-            where: { fecha: { gte: hoy } },
-            orderBy: [
-                { fecha: 'asc' },
-                { hora: 'asc' }
-            ],
-        })
+            where: {
+                estado: {
+                    in: ['PENDIENTE', 'EN_PROCESO'], 
+                },
+            },
+            orderBy: { fechaReunion: 'asc' },
+        });
 
-        res.status(200).json(reuniones)
+        res.status(200).json(reuniones);
     } catch (error) {
-        console.error('Error al obtener reuniones:', error)
-        res.status(500).json({ message: 'Error al obtener las reuniones vigentes.' })
+        console.error('Error al obtener reuniones vigentes:', error);
+        res.status(500).json({ mensaje: 'Error al obtener las reuniones vigentes.' });
     }
-}
+};
 
 // Eliminar reunión
 export const eliminarReunion = async (req: Request, res: Response) => {
@@ -93,23 +115,23 @@ export const eliminarReunion = async (req: Request, res: Response) => {
 export const obtenerReunionesHoy = async (_req: Request, res: Response) => {
     try {
         // Fecha actual (hora local Bolivia, UTC-4)
-        const ahora = new Date();
-        const inicioHoy = new Date(ahora);
-        inicioHoy.setHours(0, 0, 0, 0);
-        const finHoy = new Date(ahora);
-        finHoy.setHours(23, 59, 59, 999);
+        const ahora = new Date().toLocaleDateString('en-CA', { timeZone: 'America/La_Paz' })
+        const inicioHoy = new Date(ahora)
+        inicioHoy.setUTCHours(4, 0, 1, 0)  //Sumamos 4 horas la hora de utc
+
+        const finHoy = new Date(ahora)
+        finHoy.setUTCHours(27, 59, 59)  //igual que antes 
 
         // Buscar reuniones que sean hoy
         const reunionesHoy = await prisma.reunion.findMany({
             where: {
-                fecha: {
+                fechaReunion: {
                     gte: inicioHoy,
                     lte: finHoy,
                 },
             },
             orderBy: [
-                { fecha: 'asc' },
-                { hora: 'asc' },
+                { fechaReunion: 'asc' },
             ],
         });
 
@@ -124,10 +146,9 @@ export const obtenerReunionesHoy = async (_req: Request, res: Response) => {
 
         // Si no hay reuniones hoy, buscar la más próxima
         const proxima = await prisma.reunion.findFirst({
-            where: { fecha: { gt: finHoy } },
+            where: { fechaReunion: { gt: finHoy } },
             orderBy: [
-                { fecha: 'asc' },
-                { hora: 'asc' },
+                { fechaReunion: 'asc' }
             ],
         });
 
@@ -147,3 +168,21 @@ export const obtenerReunionesHoy = async (_req: Request, res: Response) => {
         res.status(500).json({ message: 'Error al obtener las reuniones de hoy o la próxima.' });
     }
 };
+
+export const actualizarEstadoReunion = async (req: Request, res: Response) => {
+    try {
+        const { idReunion } = req.params;
+        const { estado } = req.body;
+
+        const reunion = await prisma.reunion.update({
+            where: { idReunion: Number(idReunion) },
+            data: { estado },
+        });
+
+        res.json({ mensaje: 'Reunion actualizada correctamente' });
+    } catch (error) {
+        console.error('Error al actualizar estado:', error);
+        res.status(500).json({ mensaje: 'Error al actualizar el estado de la reunión' });
+    }
+};
+

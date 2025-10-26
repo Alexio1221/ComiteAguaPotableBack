@@ -15,7 +15,8 @@ export const crearAvisoNoticia = async (req: Request, res: Response) => {
     }
 
     // Validación de fecha
-    const hoy = new Date().toISOString().split('T')[0]
+    const hoy = new Date().toLocaleDateString('en-CA', { timeZone: 'America/La_Paz' })
+
     if (fechaVigencia < hoy) {
       res.status(400).json({ mensaje: 'La fecha de vigencia no puede ser anterior al día actual' });
       return;
@@ -23,12 +24,16 @@ export const crearAvisoNoticia = async (req: Request, res: Response) => {
 
     // Guardar imagen si existe
     const imagen = req.file ? `/uploads/avisosNoticias/${req.file.filename}` : null
+    // Ajustamos la fecha y hora al formato local
+    const fechaVigenciaFormato = new Date(fechaVigencia)
+    fechaVigenciaFormato.setUTCHours(23,59,59) //final del dia utc
+    fechaVigenciaFormato.setHours(23,59,59)  //aumentamos la diferencia de 4 horas
 
     const nuevoAviso = await prisma.noticiasYAvisos.create({
       data: {
         titulo,
         descripcion,
-        fechaVigencia: new Date(fechaVigencia),
+        fechaVigencia: fechaVigenciaFormato,
         imagen,
       },
     })
@@ -48,7 +53,7 @@ export const obtenerAvisoNoticias = async (_req: Request, res: Response) => {
     const avisosVigentes = await prisma.noticiasYAvisos.findMany({
       where: {
         fechaVigencia: {
-          gte: hoy, //mayor o igual que
+          gte: hoy,
         },
       },
       orderBy: { fechaVigencia: 'asc' }, 

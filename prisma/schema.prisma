@@ -122,12 +122,13 @@ model NoticiasYAvisos {
 model Reunion {
   idReunion         Int        @id @default(autoincrement())
   tipo              String
-  fecha             DateTime   
-  hora              String     // hora en formato 'HH:mm'
+  fechaReunion             DateTime   
   lugar             String
   motivo            String
   descripcion       String
   documentoAsamblea String?
+  fechaDeCreacion   DateTime   @default(now())
+  estado            EstadoReunion @default(PENDIENTE)
 
   asistencias       Asistencia[]
 }
@@ -191,6 +192,12 @@ enum EstadoAsistencia {
   RETRASO
   AUSENTE
   JUSTIFICADO
+}
+
+enum EstadoReunion {
+  PENDIENTE
+  FINALIZADO
+  EN_PROCESO
 }
 
 //Para el medidor
