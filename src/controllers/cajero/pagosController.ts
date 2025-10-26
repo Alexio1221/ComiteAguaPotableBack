@@ -7,7 +7,8 @@ export const registrarPago = async (req: Request, res: Response) => {
         const { comprobantes } = req.body;
 
         if (!comprobantes?.length) {
-            return res.status(400).json({ mensaje: "No se enviaron comprobantes para pagar" });
+            res.status(400).json({ mensaje: "No se enviaron comprobantes para pagar" });
+            return
         }
 
         const comprobantesData = await prisma.comprobante.findMany({
@@ -27,7 +28,8 @@ export const registrarPago = async (req: Request, res: Response) => {
         });
 
         if (comprobantesData.length === 0) {
-            return res.status(404).json({ mensaje: "No se encontraron los comprobantes" });
+            res.status(404).json({ mensaje: "No se encontraron los comprobantes" });
+            return
         }
 
         // Calcular monto total
@@ -73,13 +75,13 @@ export const registrarPago = async (req: Request, res: Response) => {
             data: { comprobanteArchivo: pdfPath },
         });
 
-        return res.json({
+        res.json({
             mensaje: "Pago registrado con éxito",
             rutaComprobante: pdfPath
         });
 
     } catch (error) {
         console.error("Error al registrar pago:", error);
-        return res.status(500).json({ mensaje: "Error interno del servidor" });
+        res.status(500).json({ mensaje: "Error interno del servidor" });
     }
 };
