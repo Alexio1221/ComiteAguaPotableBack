@@ -4,23 +4,13 @@ import prisma from '../../config/client';
 export const registrarAsistencia = async (req: Request, res: Response) => {
     try {
         const { idReunion, idUsuario, estado, observacion, cambioTabla } = req.body;
-        console.log(req.body)
 
         if (!idReunion || !idUsuario || !estado) {
             res.status(400).json({ mensaje: 'Faltan datos requeridos' });
             return
         }
 
-        if (estado === 'JUSTIFICADO' && (!observacion || observacion.trim() === '')) {
-            res.status(400).json({ mensaje: 'Debe ingresar una observación para el estado Justificado.' });
-            return;
-        }
-
         let mensajeUsuario = 'Asistencia retirada con éxito.'
-        if (cambioTabla === true) {
-            mensajeUsuario = 'Asistencia registrada con éxito.'
-        }
-
         if (cambioTabla === undefined) {
             const usuarioRegistradoHoy = await prisma.asistencia.findFirst({
                 where: {
@@ -39,6 +29,15 @@ export const registrarAsistencia = async (req: Request, res: Response) => {
             mensajeUsuario = 'Asistencia registrada con éxito'
         }
 
+        if (estado === 'JUSTIFICADO' && (!observacion || observacion.trim() === '')) {
+            res.status(400).json({ mensaje: 'Debe ingresar una observación para el estado Justificado.' });
+            return;
+        }
+
+        if (cambioTabla === true) {
+            mensajeUsuario = 'Asistencia registrada con éxito.'
+        }
+
         const asistencia = await prisma.asistencia.update({
             where: {
                 idReunion_idUsuario: {
@@ -53,7 +52,6 @@ export const registrarAsistencia = async (req: Request, res: Response) => {
             },
         });
 
-        console.log(mensajeUsuario)
         res.json({ mensaje: mensajeUsuario });
     } catch (error: any) {
         console.error(error);
@@ -131,6 +129,7 @@ export const obtenerListaDeSocios = async (req: Request, res: Response) => {
             idUsuario: list.idUsuario,
             nombre: list.usuario.nombre,
             apellidos: list.usuario.apellidos,
+            estadoAsistencia: list.estado,
             presente: list.estado === 'AUSENTE' ? false : true   //para el checkbox
         }))
 
