@@ -15,7 +15,7 @@ router.post('/usuario', registrarUsuario);  // Ruta para registrar un nuevo usua
 router.get('/funciones/:nombreRol', autenticar ,obtenerFuncionesPorRol);  // Ruta para obtener funciones por rol
 router.get('/obtenerRolActual',obtenerRolActual);  // Ruta para obtener el rol actual
 router.patch('/actualizarRolActual', actualizarRolActual);  // Ruta para actualizar el rol actual
-router.get('/roles-usuario-actual', obtenerRolesUsuarioActual);  
+router.get('/roles-usuario-actual', autenticar, obtenerRolesUsuarioActual);  //Roles del usuario que inicio sesion
 router.get('/usuarios', obtenerUsuarios);   //obtiene toda la informacion de los usuarios 
 router.put('/usuario/:idUsuario', actualizarUsuario);  //Actualiza la informacion del usuario
 router.get('/roles', obtenerRoles);   //obtiene todos los roles

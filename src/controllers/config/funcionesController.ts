@@ -1,6 +1,7 @@
 // src/controllers/roles/obtenerFuncionesPorRol.ts
 import { Request, Response } from "express";
 import prisma from "../../config/client";
+import { RequestConUsuario } from '../../middlewar/autenticacion';
 
 export const obtenerFuncionesPorRol = async (req: Request, res: Response) => {
   try {
@@ -38,38 +39,29 @@ export const obtenerFuncionesPorRol = async (req: Request, res: Response) => {
 };
 
 //Roles del usuario actual
-export const obtenerRolesUsuarioActual = async (req: Request, res: Response) => {
+export const obtenerRolesUsuarioActual = async (req: RequestConUsuario, res: Response) => {
   try {
-    const tokenSesionActual = req.cookies.token;
+    const idUsuario = req.user?.idUsuario;
 
-    if (!tokenSesionActual) {
-      res.status(400).json({ mensaje: "Se requiere el token de sesión" });
-      return;
-    }
-
-    // Buscar sesión + usuario + roles
-    const sesion = await prisma.sesion.findUnique({
-      where: { tokenSesion: tokenSesionActual },
+    // Buscar roles
+    const rolesActivos = await prisma.usuarioRol.findMany({
+      where: { idUsuario, estado: true },
       include: {
-        usuario: {
-          include: {
-            roles: {
-              include: {
-                rol: true, // Traer datos del rol
-              },
-            },
+        rol: {
+          select: {
+            nombreRol: true,
+            descripcion: true,
           },
         },
       },
     });
 
-    if (!sesion) {
-      res.status(404).json({ mensaje: "Sesión no encontrada" });
+    if (rolesActivos.length === 0) {
+      res.status(404).json({ mensaje: "El usuario no tiene roles activos" });
       return;
     }
 
-    // Obtener roles del usuario
-    const roles = sesion.usuario.roles.map((usuarioRol) => ({
+    const roles = rolesActivos.map((usuarioRol) => ({
       nombreRol: usuarioRol.rol.nombreRol,
       descripcion: usuarioRol.rol.descripcion,
     }));
