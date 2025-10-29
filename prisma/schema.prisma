@@ -26,6 +26,7 @@ model Usuario {
   medidores    Medidor[]
   asistencias  Asistencia[]
   comprobabantes Comprobante[]
+  pagos        Pago[]
 }
 
 model Rol {
@@ -122,7 +123,7 @@ model NoticiasYAvisos {
 model Reunion {
   idReunion         Int        @id @default(autoincrement())
   tipo              String
-  fechaReunion             DateTime   
+  fechaReunion      DateTime   
   lugar             String
   motivo            String
   descripcion       String
@@ -180,10 +181,12 @@ model Comprobante {
 
 model Pago {
   idPago        Int       @id @default(autoincrement())
+  idCajero      Int
   montoPagado   Decimal
   fechaPago     DateTime  @default(now())  
   comprobanteArchivo String? 
 
+  cajero        Usuario   @relation(fields: [idCajero], references: [idUsuario])
   comprobantes   Comprobante[]
 }
 

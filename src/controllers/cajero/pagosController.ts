@@ -1,14 +1,77 @@
 import { Request, Response } from 'express';
 import prisma from '../../config/client';
 import { generarComprobantePDF } from '../../utils/generarComprobantes';
+import { RequestConUsuario } from '../../middlewar/autenticacion';
 
-export const registrarPago = async (req: Request, res: Response) => {
+export const obtenerHistorialPagos = async (req: Request, res: Response) => {
+    try {
+        const pagos = await prisma.pago.findMany({
+            include: {
+                cajero: {
+                    select: {
+                        idUsuario: true,
+                        nombre: true,
+                        apellidos: true
+                    }
+                },
+                comprobantes: {
+                    select: {
+                        idComprobante: true,
+                        fechaEmision: true,
+                        montoBasico: true,
+                        montoAdicional: true,
+                        moraAcumulada: true,
+                        totalPagar: true,
+                        estadoPago: true,
+                        fechaLimite: true,
+                        lectura: {
+                            select: {
+                                idLectura: true,
+                                lecturaActual: true,
+                                lecturaAnterior: true,
+                                consumo: true,
+                                fechaLectura: true,
+                                observaciones: true,
+                                medidor: {
+                                    select: {
+                                        idMedidor: true,
+                                        socio: {
+                                            select: {
+                                                idUsuario: true,
+                                                nombre: true,
+                                                apellidos: true
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            orderBy: { fechaPago: 'desc' }
+        });
+
+        res.json(pagos);
+    } catch (error) {
+        console.error('Error al obtener historial:', error);
+        res.status(500).json({ mensaje: 'Error al obtener historial de pagos' });
+    }
+}
+
+export const registrarPago = async (req: RequestConUsuario, res: Response) => {
     try {
         const { comprobantes } = req.body;
+        const cajero = req.user?.idUsuario;
 
         if (!comprobantes?.length) {
             res.status(400).json({ mensaje: "No se enviaron comprobantes para pagar" });
             return
+        }
+
+        if (!cajero) {
+            res.status(401).json({ mensaje: 'No autorizado. Inicie sesión nuevamente.' });
+            return;
         }
 
         const comprobantesData = await prisma.comprobante.findMany({
@@ -40,7 +103,7 @@ export const registrarPago = async (req: Request, res: Response) => {
 
         // Crear registro de pago
         const nuevoPago = await prisma.pago.create({
-            data: { montoPagado: montoTotal },
+            data: { montoPagado: montoTotal, idCajero: cajero },
         });
 
         // Actualizar los comprobantes como PAGADO y asociarlos al pago

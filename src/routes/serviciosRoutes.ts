@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { registrarCategoria, obtenerCategorias, editarCategoria, eliminarCategoria } from '../controllers/config/categoriasController';
 import { obtenerMedidoresLectura, registrarLectura, crearLecturasPendientes } from '../controllers/operador/lecturasController'
 import { obtenerComprobantesSocio } from '../controllers/cajero/comprobantesController';
-import { registrarPago } from '../controllers/cajero/pagosController';
+import { registrarPago, obtenerHistorialPagos } from '../controllers/cajero/pagosController';
 import { autenticar } from '../middlewar/autenticacion';
 
 
@@ -19,8 +19,8 @@ router.post('/lecturas', autenticar, registrarLectura)  //Registra una nueva lec
 
 
 //Comprobantes Cajero
-router.get('/comprobantes/:idUsuario', autenticar, obtenerComprobantesSocio);
+router.get('/comprobantes/:idUsuario', autenticar, obtenerComprobantesSocio);  //Obtiene los comprobantes por socio
+router.get('/historial-pagos', obtenerHistorialPagos);  //Se usa para que el cajero obtenga el historial de pagos
 router.post('/pagos', autenticar, registrarPago);
-
 
 export default router;
