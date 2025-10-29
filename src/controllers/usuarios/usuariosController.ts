@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import prisma from '../../config/client'; // asegúrate de que este sea tu prisma client
 import bcrypt from 'bcryptjs';
+import { validarContraseña } from '../../utils/validaciones';
+
 
 export const obtenerUsuarios = async (req: Request, res: Response) => {
   try {
@@ -57,6 +59,15 @@ export const cambiarContraseña = async (req: Request, res: Response) => {
 
     if (!usuarioEncontrado) {
       res.status(404).json({ mensaje: "Usuario no encontrado" });
+      return;
+    }
+
+    const validacionContraseña = validarContraseña(nuevaContraseña);
+    if (!validacionContraseña.valida) {
+      res.status(400).json({
+        error: 'CONTRASEÑA_INVALIDA',
+        mensaje: validacionContraseña.mensaje
+      });
       return;
     }
 

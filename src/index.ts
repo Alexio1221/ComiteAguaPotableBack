@@ -16,8 +16,8 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-  origin: 'http://192.168.100.87:3000', 
-  //origin: 'http://localhost:3000',
+  //origin: 'http://192.168.100.87:3000', 
+  origin: 'http://localhost:3000',
   credentials: true, // necesario para enviar y recibir cookies
 }));
 
@@ -42,13 +42,13 @@ app.get('/', (_req, res) => {
 });
 
 /*Local*/ 
-/*app.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`Servidor escuchando en http://localhost:${PORT}`);
-});*/
-//Celular
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Servidor escuchando en http://0.0.0.0:${PORT}`);
 });
+//Celular
+/*app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Servidor escuchando en http://0.0.0.0:${PORT}`);
+});*/
 
 /*Network
 app.listen(5000, "0.0.0.0", () => {

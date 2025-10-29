@@ -6,6 +6,6 @@ const router = Router();
 
 router.post("/registrar-chat-token", registrarChatPorToken); //se usa dentro de back
 router.post("/generar-link-telegram", generarLinkTelegram);
-router.post('/cambiar-password', cambiarContraseña)
+router.post('/cambiar-password', cambiarContraseña)   //cambiar contraseña de usuario
 
 export default router;
