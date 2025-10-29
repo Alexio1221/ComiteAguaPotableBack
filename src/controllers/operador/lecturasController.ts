@@ -192,12 +192,12 @@ export const registrarLectura = async (req: RequestConUsuario, res: Response) =>
             return;
         }
 
-        const precioPorM3 = Number(medidor.categoria.tarifaAdicional);
+        const tarifaAdicional = Number(medidor.categoria.tarifaAdicional);
         const tarifaBasica = Number(medidor.categoria.tarifa);
         const limiteBasico = Number(medidor.categoria.limiteBasico);
         let montoAdicional = 0;
         if (consumo > limiteBasico) {
-            montoAdicional = (consumo - limiteBasico) * precioPorM3;
+            montoAdicional = (consumo - limiteBasico) * tarifaAdicional;
         }
         const cantidadMesesAtrasado = await prisma.comprobante.count({
             where: {
@@ -215,9 +215,13 @@ export const registrarLectura = async (req: RequestConUsuario, res: Response) =>
         }
 
         const totalPagar = tarifaBasica + montoAdicional + moraAcumulada;
-        //Damos de plazo 2 mese para pagar 
-        const fechaLimite = new Date();
-        fechaLimite.setMonth(fechaLimite.getMonth() + 2);
+        //Damos de plazo 3 meses para pagar 
+        const fechaEmision = new Date(); 
+        const fechaLimite = new Date(
+            fechaEmision.getFullYear(),
+            fechaEmision.getMonth() + 3, // sumas 3 meses
+            fechaEmision.getDate()        // mismo día
+        );
 
         if (!comprobanteExistente) {
             await prisma.comprobante.create({
