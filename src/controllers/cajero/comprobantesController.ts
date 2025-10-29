@@ -54,7 +54,7 @@ export const obtenerComprobantesSocio = async (req: Request, res: Response) => {
         });
 
         if (!comprobantes.length) {
-            res.status(404).json({ mensaje: 'No se encontraron comprobantes para este socio' });
+            res.status(200).json({ comprobantes: []});
             return
         }
 
