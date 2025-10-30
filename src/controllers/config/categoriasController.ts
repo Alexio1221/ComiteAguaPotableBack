@@ -5,7 +5,7 @@ import { Prisma } from '@prisma/client'
 // Crear una nueva categoría
 export const registrarCategoria = async (req: Request, res: Response) => {
   try {
-    const { tipo, tarifa, tarifaAdicional, limiteBasico, descripcion } = req.body
+    const { tipo, tarifa, tarifaAdicional, moraExponencial, limiteBasico, descripcion } = req.body
 
     // Validar que los campos requeridos estén presentes
     if (!tipo || tarifa === undefined || tarifaAdicional === undefined || limiteBasico === undefined || !descripcion) {
@@ -19,6 +19,7 @@ export const registrarCategoria = async (req: Request, res: Response) => {
         tarifa: new Prisma.Decimal(tarifa),
         tarifaAdicional: new Prisma.Decimal(tarifaAdicional),
         limiteBasico: new Prisma.Decimal(limiteBasico),
+        moraExponencial,
         descripcion,
       },
     })
@@ -59,7 +60,7 @@ export const obtenerCategorias = async (_req: Request, res: Response) => {
 export const editarCategoria = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { tipo, tarifa, tarifaAdicional, limiteBasico, descripcion } = req.body;
+    const { tipo, tarifa, tarifaAdicional, moraExponencial, limiteBasico, descripcion } = req.body;
 
     if (!id) {
       res.status(400).json({ mensaje: 'El ID de la categoría es requerido' });
@@ -73,6 +74,7 @@ export const editarCategoria = async (req: Request, res: Response) => {
         tarifa,
         tarifaAdicional,
         limiteBasico,
+        moraExponencial,
         descripcion,
       },
     });
