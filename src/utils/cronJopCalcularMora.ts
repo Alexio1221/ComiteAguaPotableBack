@@ -37,10 +37,16 @@ cron.schedule('*/5 * * * *', async () => {
       });
 
       const tarifaAdicional = lectura.medidor.categoria.tarifaAdicional.toNumber();
-
-      // Calcular mora exponencial según cuántos retrasos tenga
-      const mora = Math.pow(tarifaAdicional, retrasosPrevios + 1);
-
+      let mora = 0;
+      if (lectura.medidor.categoria.moraExponencial == true) {
+        console.log("Se esta aplicando la mora exponencial")
+        // Calcular mora exponencial según cuántos retrasos tenga
+        mora = Math.pow(tarifaAdicional, retrasosPrevios + 1);
+      } else {
+        console.log("No se esta aplicando la mora normal")
+        mora = tarifaAdicional * (retrasosPrevios + 1);
+      }
+      
       await prisma.comprobante.update({
         where: { idComprobante },
         data: {
