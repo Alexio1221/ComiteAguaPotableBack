@@ -10,6 +10,7 @@ import cors from 'cors';
 import cookieParser from "cookie-parser";
 import path from 'path'
 import { iniciarBot } from './bot';
+import './utils/cronJopCalcularMora';
 
 dotenv.config(); 
 

@@ -97,7 +97,7 @@ model Categoria {
   tarifa       Decimal   //tarifa basica
   tarifaAdicional Decimal
   limiteBasico Decimal
-  moraExponencial   Boolean
+  moraExponencial   Boolean  @default(false)
   descripcion  String
   medidores    Medidor[]
 }
