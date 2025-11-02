@@ -18,6 +18,29 @@ export const iniciarSesion = async (req: Request<{}, any, LoginBody>, res: Respo
       return;
     }
 
+    const usuarioActivo = await prisma.usuario.findFirst({
+      where: {
+        usuario: usuario.trim().toLowerCase(), 
+        roles: {
+          some: {
+            rol: {
+              nombreRol: "Socio"
+            },
+            estado: false
+          }
+        }
+      },
+      select: {
+        nombre: true
+      }
+    });
+
+    if (usuarioActivo) {
+      res.status(401).json({ error: 'CUENTA_BLOQUEADA', mensaje: 'La cuenta esta bloqueada.' });
+      console.log(usuarioActivo)
+      return;
+    }
+
     // Buscar usuario con roles y funciones
     const usuarioEncontrado = await prisma.usuario.findUnique({
       where: { usuario: usuario.trim().toLowerCase() },

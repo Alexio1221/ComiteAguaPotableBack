@@ -191,6 +191,13 @@ model Pago {
   comprobantes   Comprobante[]
 }
 
+model Figura {
+  idFigura   Int      @id @default(autoincrement())
+  nombre     String
+  tipo       String
+  geojson    Json
+}
+
 enum EstadoAsistencia {
   PRESENTE
   RETRASO
