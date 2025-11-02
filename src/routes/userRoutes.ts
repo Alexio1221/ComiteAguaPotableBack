@@ -7,7 +7,7 @@ import { obtenerUsuarios } from '../controllers/usuarios/usuariosController';
 import { obtenerRoles } from '../controllers/config/rolesController';
 import { obtenerCodigo, verificarCodigo } from '../controllers/telegram/passwordController';
 import {autenticar} from '../middlewar/autenticacion'
-import { obtenerCategorias } from '../controllers/config/categoriasController';
+import { obtenerConsumos } from '../controllers/usuarios/consumosController';
 
 const router = Router();
 
@@ -21,5 +21,9 @@ router.put('/usuario/:idUsuario', actualizarUsuario);  //Actualiza la informacio
 router.get('/roles', obtenerRoles);   //obtiene todos los roles
 router.post("/recuperar-codigo", obtenerCodigo);    //Obtener codigo para recuperar la contraseña
 router.post("/verificar-codigo", verificarCodigo);  //Verificar codigo recibido
+
+
+//Socio
+router.get('/consumos', autenticar , obtenerConsumos)  //Obtiene los consumos de un socio
 
 export default router;
