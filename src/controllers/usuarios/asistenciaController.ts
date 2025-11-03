@@ -35,10 +35,13 @@ export const registrarAsistencia = async (req: Request, res: Response) => {
         }
 
         if (cambioTabla === true) {
-            mensajeUsuario = 'Asistencia registrada con éxito.'
+            mensajeUsuario = 'Asistencia registrada con éxito'
         }
+        console.log(cambioTabla)
+        const fechaRegistro = cambioTabla === true ? new Date() : null;
+        console.log(fechaRegistro)
 
-        const asistencia = await prisma.asistencia.update({
+        await prisma.asistencia.update({
             where: {
                 idReunion_idUsuario: {
                     idReunion: Number(idReunion),
@@ -47,7 +50,7 @@ export const registrarAsistencia = async (req: Request, res: Response) => {
             },
             data: {
                 estado,
-                registradoEn: new Date(),
+                registradoEn: fechaRegistro,
                 observacion: observacion || null,
             },
         });
