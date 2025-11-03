@@ -139,7 +139,7 @@ model Asistencia {
   idReunion Int
   idUsuario Int
   estado    EstadoAsistencia @default(AUSENTE)
-  registradoEn DateTime // cuando marcó asistencia
+  registradoEn DateTime? // cuando marcó asistencia
   observacion String?  // en casos de tener una justificacion
 
   reunion   Reunion @relation(fields: [idReunion], references: [idReunion])

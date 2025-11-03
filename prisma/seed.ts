@@ -113,7 +113,7 @@ async function main() {
       { idRol: 3, nombreFuncion: "Historial", icono: "Archive" },
       { idRol: 3, nombreFuncion: "Incidencias", icono: "AlertTriangle" },
 
-      { idRol: 4, nombreFuncion: "Consumo", icono: "Droplet" },
+      { idRol: 4, nombreFuncion: "Consumos", icono: "Droplet" },
       { idRol: 4, nombreFuncion: "Avisos", icono: "Bell" },
       { idRol: 4, nombreFuncion: "Reclamos", icono: "AlertCircle" },
       { idRol: 4, nombreFuncion: "Reuniones", icono: "Calendar" },

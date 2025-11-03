@@ -8,6 +8,7 @@ import { autenticar } from '../middlewar/autenticacion';
 
 const router = Router();
 
+//Categorias
 router.post('/categorias', registrarCategoria)  //Crea una nuevo categoria
 router.get('/categorias', obtenerCategorias)  //Obtiene todas las categorias
 router.put('/categoria/:id', editarCategoria)  //Edita la categoria por el id

@@ -3,6 +3,8 @@ import { crearAvisoNoticia, obtenerAvisoNoticias, eliminarAvisoNoticia } from '.
 import {cargarAvisosNoticias, cargarDocumentosAsamblea } from '../middlewar/cargarAvisosNoticias' 
 import { crearReunion, obtenerReunionesVigentes, eliminarReunion, obtenerReunionesHoy, actualizarEstadoReunion } from '../controllers/ReunionesAvisosNoticias/reunionesController'
 import { registrarAsistencia, generarRegistrosAsistencia, obtenerListaDeSocios } from '../controllers/usuarios/asistenciaController';
+import { obtenerHistorialReuniones } from '../controllers/ReunionesAvisosNoticias/reunionSocioController';
+import { autenticar } from '../middlewar/autenticacion';
 
 const router = Router()
 
@@ -16,6 +18,7 @@ router.delete('/:id', eliminarAvisoNoticia)    // Eliminar aviso por ID
 router.post('/reunion', cargarDocumentosAsamblea.single('documentoAsamblea'), crearReunion)    //subir reunion
 router.get('/reunion', obtenerReunionesVigentes)      // Listar reuniones vigentes
 router.get('/reuniones/hoy', obtenerReunionesHoy)      // Listar reuniones de hoy o mas proximo
+router.get('/reuniones-socio', autenticar ,obtenerHistorialReuniones)    //Historial de reuniones por socios, con sus asistencia.
 router.put('/reuniones/:idReunion/estado', actualizarEstadoReunion);  // Actualiza estado de reunion(En proceso o finalizado)
 router.delete('/reunion/:id', eliminarReunion)        // Eliminar reunión por ID
 

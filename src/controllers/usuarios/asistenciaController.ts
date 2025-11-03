@@ -84,7 +84,6 @@ export const generarRegistrosAsistencia = async (req: Request, res: Response) =>
             data: usuarios.map(u => ({
                 idReunion: reunion.idReunion,
                 idUsuario: u.idUsuario,
-                registradoEn: new Date(),
             })),
             skipDuplicates: true, //evita error si ya existen combinaciones en la clave compuesta
         });

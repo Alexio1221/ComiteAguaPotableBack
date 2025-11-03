@@ -91,11 +91,8 @@ export const iniciarSesion = async (req: Request<{}, any, LoginBody>, res: Respo
     // Respuesta final
     res.status(200).json({
       mensaje: 'Inicio de sesión exitoso',
-      usuario: {
-        idUsuario: usuarioEncontrado.idUsuario,
-        usuario: usuarioEncontrado.usuario,
+      usuario: { 
         nombre: usuarioEncontrado.nombre,
-        apellido: usuarioEncontrado.apellidos,
       }
     });
 
