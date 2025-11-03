@@ -37,9 +37,7 @@ export const registrarAsistencia = async (req: Request, res: Response) => {
         if (cambioTabla === true) {
             mensajeUsuario = 'Asistencia registrada con éxito'
         }
-        console.log(cambioTabla)
-        const fechaRegistro = cambioTabla === true ? new Date() : null;
-        console.log(fechaRegistro)
+        const fechaRegistro = cambioTabla === true ? new Date() : null
 
         await prisma.asistencia.update({
             where: {
@@ -57,11 +55,15 @@ export const registrarAsistencia = async (req: Request, res: Response) => {
 
         res.json({ mensaje: mensajeUsuario });
     } catch (error: any) {
-        console.error(error);
+        if (error.name === "PrismaClientValidationError") {
+            res.status(404).json({ mensaje: 'El codigo qr no es correcto.' });
+            return
+        }
         if (error.code === 'P2025') {
             res.status(404).json({ mensaje: 'No se encontró el registro de asistencia' });
             return
         }
+        console.error(error);
         res.status(500).json({ mensaje: 'Error al registrar asistencia', error });
     }
 };
