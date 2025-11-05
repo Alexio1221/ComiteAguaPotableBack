@@ -61,13 +61,11 @@ export const obtenerMedidoresLectura = async (_req: Request, res: Response) => {
         const mesActual = ahora.getMonth();
         const anioActual = ahora.getFullYear();
 
-        // 1️⃣ Traer todos los medidores activos con sus lecturas
         const medidores = await prisma.medidor.findMany({
             where: { estado: 'ACTIVO' },
             include: { lecturas: true },
         });
 
-        // 2️⃣ Generar lecturas pendientes si no existen para este mes
         const nuevasLecturas: any[] = [];
 
         for (const medidor of medidores) {
@@ -95,7 +93,6 @@ export const obtenerMedidoresLectura = async (_req: Request, res: Response) => {
             });
         }
 
-        // 3️⃣ Traer ahora las lecturas de este mes para mostrar
         const medidoresConLectura = await prisma.medidor.findMany({
             where: { estado: 'ACTIVO' },
             include: {
@@ -115,7 +112,6 @@ export const obtenerMedidoresLectura = async (_req: Request, res: Response) => {
             },
         });
 
-        // 4️⃣ Formatear respuesta
         const infoMedidores = medidoresConLectura.map(m => {
             const lecturaActual = m.lecturas[0];
 

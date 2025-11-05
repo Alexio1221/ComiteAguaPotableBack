@@ -3,6 +3,7 @@ import { autenticar } from '../middlewar/autenticacion'
 import { iniciarSesion } from '../controllers/usuarios/loginController';
 import { cerrarSesion } from '../controllers/usuarios/loginController';
 import { RequestConUsuario } from '../middlewar/autenticacion';
+import { obtenerDatosSocio } from '../controllers/usuarios/perfilController';
 
 
 const router = Router();
@@ -14,5 +15,7 @@ router.post("/cerrar-sesion", autenticar, cerrarSesion);
 router.get('/verificar-sesion', autenticar, (req: RequestConUsuario, res) => {
   res.json({ loggedIn: true, user: req.user?.usuario });
 });
+
+router.post('/perfil-socio', autenticar, obtenerDatosSocio)
 
 export default router;
