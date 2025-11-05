@@ -7,9 +7,9 @@ import path from 'path'
 export const crearReunion = async (req: Request, res: Response) => {
     try {
         const { tipoReunion, fecha, hora, lugar, motivo, descripcion } = req.body
-        const documentoAsamblea = req.file ? `/uploads/asambleas/${req.file.filename}` : null
-        if (!tipoReunion || !fecha || !hora || !lugar || !motivo || !descripcion) {
-            res.status(400).json({ message: 'Todos los campos obligatorios deben completarse.' });
+        
+        if (!tipoReunion || !fecha || !hora || !lugar || !motivo || !descripcion || req.file === undefined) {
+            res.status(400).json({ mensaje: 'Todos los campos obligatorios deben completarse.' });
             return;
         }
         const [h, m] = hora.split(':').map(Number)
@@ -46,7 +46,7 @@ export const crearReunion = async (req: Request, res: Response) => {
             })
             return
         }
-
+        const documentoAsamblea = req.file ? `/uploads/asambleas/${req.file.filename}` : null
         const nuevaReunion = await prisma.reunion.create({
             data: {
                 tipoReunion: Number(tipoReunion),
