@@ -81,12 +81,21 @@ export const generarRegistrosAsistencia = async (req: Request, res: Response) =>
             return
         }
 
-        const usuarios = await prisma.usuario.findMany({
-            select: { idUsuario: true },
+        const usuariosActivos = await prisma.usuario.findMany({
+            where: {
+                roles: {
+                    some: {
+                        estado: true,
+                    },
+                },
+            },
+            select: {
+                idUsuario: true,
+            },
         });
 
         await prisma.asistencia.createMany({
-            data: usuarios.map(u => ({
+            data: usuariosActivos.map(u => ({
                 idReunion: reunion.idReunion,
                 idUsuario: u.idUsuario,
             })),
