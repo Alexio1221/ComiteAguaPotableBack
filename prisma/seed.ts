@@ -96,13 +96,13 @@ async function main() {
   await prisma.funcion.createMany({
     data: [
       { idRol: 1, nombreFuncion: "Asistencia", icono: "UserRoundCheck" },
+      { idRol: 1, nombreFuncion: "Asambleas", icono: "ClipboardList" },
       { idRol: 1, nombreFuncion: "Usuarios", icono: "Users" },
       { idRol: 1, nombreFuncion: "Medidores", icono: "Gauge" },
       { idRol: 1, nombreFuncion: "Categorias", icono: "ChartSpline" },
       { idRol: 1, nombreFuncion: "Reportes", icono: "BarChart" },
       { idRol: 1, nombreFuncion: "Avisos", icono: "Bell" },
       { idRol: 1, nombreFuncion: "Mapa", icono: "Map" },
-      { idRol: 1, nombreFuncion: "Asambleas", icono: "ClipboardList" },
 
       { idRol: 2, nombreFuncion: "Cobros", icono: "DollarSign" },
       { idRol: 2, nombreFuncion: "Comprobantes", icono: "FileText" },

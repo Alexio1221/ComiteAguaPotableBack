@@ -22,8 +22,8 @@ export const obtenerHistorialReuniones = async (req: RequestConUsuario, res: Res
                         descripcion: true,
                         estado: true,
                         documentoAsamblea: true,
-                        tarifa:{
-                            select:{
+                        tarifa: {
+                            select: {
                                 nombreReunion: true
                             }
                         }
@@ -31,7 +31,22 @@ export const obtenerHistorialReuniones = async (req: RequestConUsuario, res: Res
                 },
             },
         });
-        res.status(200).json(historialAsistencias);
+
+        const datosFormateado = historialAsistencias.map(historialAsistencia => ({
+            idReunion: historialAsistencia.idReunion,
+            estadoAsistencia: historialAsistencia.estado,
+            registradoEn: historialAsistencia.registradoEn,
+            observacion: historialAsistencia.observacion,
+            tipoReunion: historialAsistencia.reunion.tarifa.nombreReunion,
+            fechaReunion: historialAsistencia.reunion.fechaReunion,
+            lugar: historialAsistencia.reunion.lugar,
+            motivo: historialAsistencia.reunion.motivo,
+            descripcion: historialAsistencia.reunion.descripcion,
+            estadoReunion: historialAsistencia.reunion.estado,
+            documentoAsamblea: historialAsistencia.reunion.documentoAsamblea,
+        }));
+
+        res.status(200).json(datosFormateado);
     } catch (error) {
         console.error('Error al obtener el historial de reuniones:', error);
         res.status(500).json({ mensaje: 'Error al obtener el historial de reuniones.' });
