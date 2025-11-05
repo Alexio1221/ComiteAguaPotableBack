@@ -11,6 +11,7 @@ import cookieParser from "cookie-parser";
 import path from 'path'
 import { iniciarBot } from './bot';
 import './utils/cronJopCalcularMora';
+import './utils/cronJopActualizarReunion';
 
 dotenv.config(); 
 
