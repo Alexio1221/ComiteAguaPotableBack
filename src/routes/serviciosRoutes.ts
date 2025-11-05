@@ -3,6 +3,7 @@ import { registrarCategoria, obtenerCategorias, editarCategoria, eliminarCategor
 import { obtenerMedidoresLectura, registrarLectura, crearLecturasPendientes } from '../controllers/operador/lecturasController'
 import { obtenerComprobantesSocio } from '../controllers/cajero/comprobantesController';
 import { registrarPago, obtenerHistorialPagos, generarReportePago } from '../controllers/cajero/pagosController';
+import { obtenerTarifasReuniones } from '../controllers/ReunionesAvisosNoticias/tarifaReunionController';
 import { autenticar } from '../middlewar/autenticacion';
 
 
@@ -25,4 +26,7 @@ router.get('/historial-pagos', obtenerHistorialPagos);  //Se usa para que el caj
 router.post('/pagos', autenticar, registrarPago);
 router.post('/pagos-reporte', generarReportePago)  //Genera un archivo pdf para enviarlo al frontend
 
+
+//Tarifas Reunion
+router.get('/tarifas-reunion', autenticar, obtenerTarifasReuniones)  //obtiene todas las tarifas con sus datos para las reuniones
 export default router;

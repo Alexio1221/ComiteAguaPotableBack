@@ -91,7 +91,7 @@ async function main() {
     ],
     skipDuplicates: true,
   })
-  
+
   // === Funciones ===
   await prisma.funcion.createMany({
     data: [
@@ -122,6 +122,15 @@ async function main() {
     skipDuplicates: true,
   });
 
+  await prisma.tarifaReunion.createMany({
+    data: [
+      { nombreReunion: "Reunión Ordinaria", ausente: 20.0, retraso: 5.0, },
+      { nombreReunion: "Reunión Extraordinaria", ausente: 30.0, retraso: 10.0, },
+      { nombreReunion: "Asamblea General", ausente: 50.0, retraso: 15.0, },
+      { nombreReunion: "Trabajo", ausente: 25.0, retraso: 8.0, },
+    ],
+    skipDuplicates: true,
+  });
   await mainMedidores();
   await mainLecturas();
 }

@@ -6,10 +6,9 @@ import path from 'path'
 // Crear una reunión
 export const crearReunion = async (req: Request, res: Response) => {
     try {
-        const { tipo, fecha, hora, lugar, motivo, descripcion } = req.body
+        const { tipoReunion, fecha, hora, lugar, motivo, descripcion } = req.body
         const documentoAsamblea = req.file ? `/uploads/asambleas/${req.file.filename}` : null
-
-        if (!tipo || !fecha || !hora || !lugar || !motivo || !descripcion) {
+        if (!tipoReunion || !fecha || !hora || !lugar || !motivo || !descripcion) {
             res.status(400).json({ message: 'Todos los campos obligatorios deben completarse.' });
             return;
         }
@@ -50,7 +49,7 @@ export const crearReunion = async (req: Request, res: Response) => {
 
         const nuevaReunion = await prisma.reunion.create({
             data: {
-                tipo,
+                tipoReunion: Number(tipoReunion),
                 fechaReunion,
                 lugar,
                 motivo,
@@ -71,13 +70,36 @@ export const obtenerReunionesVigentes = async (_req: Request, res: Response) => 
         const reuniones = await prisma.reunion.findMany({
             where: {
                 estado: {
-                    in: ['PENDIENTE', 'EN_PROCESO'], 
+                    in: ['PENDIENTE', 'EN_PROCESO'],
                 },
+            },
+            select: {
+                idReunion: true,
+                tipoReunion: true,
+                fechaReunion: true,
+                lugar: true,
+                motivo: true,
+                descripcion: true,
+                tarifa: {
+                    select: {
+                        nombreReunion: true
+                    }
+                }
             },
             orderBy: { fechaReunion: 'asc' },
         });
 
-        res.status(200).json(reuniones);
+        const datosFormateados = reuniones.map(reunion => ({
+            idReunion: reunion.idReunion,
+            tipoReunion: reunion.tipoReunion,
+            nombreReunion: reunion.tarifa.nombreReunion,
+            fechaReunion: reunion.fechaReunion,
+            lugar: reunion.lugar,
+            motivo: reunion.motivo,
+            descripcion: reunion.descripcion
+        }))
+
+        res.status(200).json(datosFormateados);
     } catch (error) {
         console.error('Error al obtener reuniones vigentes:', error);
         res.status(500).json({ mensaje: 'Error al obtener las reuniones vigentes.' });

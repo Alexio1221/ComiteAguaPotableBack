@@ -16,13 +16,17 @@ export const obtenerHistorialReuniones = async (req: RequestConUsuario, res: Res
                 observacion: true,
                 reunion: {
                     select: {
-                        tipo: true,
                         fechaReunion: true,
                         lugar: true,
                         motivo: true,
                         descripcion: true,
                         estado: true,
                         documentoAsamblea: true,
+                        tarifa:{
+                            select:{
+                                nombreReunion: true
+                            }
+                        }
                     }
                 },
             },

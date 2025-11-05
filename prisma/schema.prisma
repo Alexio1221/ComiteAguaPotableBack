@@ -8,25 +8,26 @@ datasource db {
 }
 
 model Usuario {
-  idUsuario    Int          @id @default(autoincrement())
-  nombre       String
-  apellidos     String
-  telefono     String       @unique
-  ci           String       @unique
-  chat_id      String?      @unique
-  telegramToken String?     // <-- token temporal para deep link
-  tokenExpira  DateTime?    // <-- opcional: expiración del token
-  usuario      String       @unique
-  contraseña  String
-  creadoEn     DateTime     @default(now())
-  modificadoEn DateTime     @updatedAt
-  sesiones     Sesion[]
-  roles        UsuarioRol[]
+  idUsuario      Int            @id @default(autoincrement())
+  nombre         String
+  apellidos      String
+  telefono       String         @unique
+  ci             String         @unique
+  chat_id        String?        @unique
+  telegramToken  String? // <-- token temporal para deep link
+  tokenExpira    DateTime? // <-- opcional: expiración del token
+  usuario        String         @unique
+  contraseña    String
+  creadoEn       DateTime       @default(now())
+  modificadoEn   DateTime       @updatedAt
+  sesiones       Sesion[]
+  roles          UsuarioRol[]
   recuperaciones Recuperacion[]
-  medidores    Medidor[]
-  asistencias  Asistencia[]
+  medidores      Medidor[]
+  asistencias    Asistencia[]
   comprobabantes Comprobante[]
-  pagos        Pago[]
+  pagos          Pago[]
+  pagosReunion   PagoReunion[]
 }
 
 model Rol {
@@ -40,7 +41,7 @@ model Rol {
 model UsuarioRol {
   idUsuario         Int
   idRol             Int
-  estado            Boolean  @default(true) 
+  estado            Boolean  @default(true)
   fechaCreacion     DateTime @default(now())
   fechaModificacion DateTime @updatedAt
   rol               Rol      @relation(fields: [idRol], references: [idRol])
@@ -72,48 +73,48 @@ model Recuperacion {
   idRecuperacion Int      @id @default(autoincrement())
   idUsuario      Int
   codigo         String
-  estado         Boolean  @default(true)  // true = activo, false = usado o expirado
+  estado         Boolean  @default(true) // true = activo, false = usado o expirado
   creadoEn       DateTime @default(now())
-  expiraEn       DateTime  
+  expiraEn       DateTime
 
-  usuario        Usuario  @relation(fields: [idUsuario], references: [idUsuario])
+  usuario Usuario @relation(fields: [idUsuario], references: [idUsuario])
 }
 
 model Medidor {
-  idMedidor    Int    @id @default(autoincrement())
-  idSocio      Int
-  idCategoria  Int
-  fechaRegistro DateTime @default(now())
-  estado       Estado    @default(ACTIVO)
-  categoria    Categoria @relation(fields: [idCategoria], references: [idCategoria])
-  socio        Usuario   @relation(fields: [idSocio], references: [idUsuario])
+  idMedidor      Int             @id @default(autoincrement())
+  idSocio        Int
+  idCategoria    Int
+  fechaRegistro  DateTime        @default(now())
+  estado         Estado          @default(ACTIVO)
+  categoria      Categoria       @relation(fields: [idCategoria], references: [idCategoria])
+  socio          Usuario         @relation(fields: [idSocio], references: [idUsuario])
   ubicacionSocio UbicacionSocio?
-  lecturas Lectura[]
+  lecturas       Lectura[]
 }
 
 model Categoria {
-  idCategoria  Int    @id @default(autoincrement())
-  tipo         String
-  tarifa       Decimal   //tarifa basica
+  idCategoria     Int       @id @default(autoincrement())
+  tipo            String
+  tarifa          Decimal //tarifa basica
   tarifaAdicional Decimal
-  limiteBasico Decimal
-  moraExponencial   Boolean  @default(false)
-  descripcion  String
-  medidores    Medidor[]
+  limiteBasico    Decimal
+  moraExponencial Boolean   @default(false)
+  descripcion     String
+  medidores       Medidor[]
 }
 
 model UbicacionSocio {
-  idUbicacion  Int    @id @default(autoincrement())
-  idMedidor    Int    @unique
-  direccion    String
-  latitud      Float
-  longitud     Float
-  descripcion  String
+  idUbicacion Int     @id @default(autoincrement())
+  idMedidor   Int     @unique
+  direccion   String
+  latitud     Float
+  longitud    Float
+  descripcion String
   medidor     Medidor @relation(fields: [idMedidor], references: [idMedidor])
 }
 
 model NoticiasYAvisos {
-  idNoticiaAviso   Int   @id @default(autoincrement())
+  idNoticiaAviso   Int      @id @default(autoincrement())
   titulo           String
   descripcion      String
   fechaPublicacion DateTime @default(now())
@@ -122,80 +123,104 @@ model NoticiasYAvisos {
 }
 
 model Reunion {
-  idReunion         Int        @id @default(autoincrement())
-  tipo              String
-  fechaReunion      DateTime   
+  idReunion         Int           @id @default(autoincrement())
+  tipoReunion       Int // referencia a TarifaReun
+  fechaReunion      DateTime
   lugar             String
   motivo            String
   descripcion       String
   documentoAsamblea String?
-  fechaDeCreacion   DateTime   @default(now())
+  fechaDeCreacion   DateTime      @default(now())
+  tarifa            TarifaReunion @relation(fields: [tipoReunion], references: [idTarifaReunion])
   estado            EstadoReunion @default(PENDIENTE)
 
-  asistencias       Asistencia[]
+  asistencias Asistencia[]
+}
+
+model TarifaReunion {
+  idTarifaReunion    Int       @id @default(autoincrement())
+  nombreReunion      String
+  ausente            Decimal
+  retraso            Decimal
+  fechaActualizacion DateTime  @updatedAt
+  reunion            Reunion[]
+}
+
+model PagoReunion {
+  idPagoReunion Int        @id @default(autoincrement())
+  idReunion     Int
+  idUsuario     Int
+  idCajero      Int
+  fechaPago     DateTime?
+  estado        Boolean
+  asistencia    Asistencia @relation("AsistenciaPagoReunion", fields: [idReunion, idUsuario], references: [idReunion, idUsuario])
+  cajero        Usuario    @relation(fields: [idCajero], references: [idUsuario])
+
+  @@unique([idReunion, idUsuario])
 }
 
 model Asistencia {
-  idReunion Int
-  idUsuario Int
-  estado    EstadoAsistencia @default(AUSENTE)
+  idReunion    Int
+  idUsuario    Int
+  estado       EstadoAsistencia @default(AUSENTE)
   registradoEn DateTime? // cuando marcó asistencia
-  observacion String?  // en casos de tener una justificacion
+  observacion  String? // en casos de tener una justificacion
 
-  reunion   Reunion @relation(fields: [idReunion], references: [idReunion])
-  usuario   Usuario @relation(fields: [idUsuario], references: [idUsuario])
+  reunion Reunion       @relation(fields: [idReunion], references: [idReunion])
+  usuario Usuario       @relation(fields: [idUsuario], references: [idUsuario])
+  pagos   PagoReunion[] @relation("AsistenciaPagoReunion")
 
   @@id([idReunion, idUsuario])
 }
 
 model Lectura {
-  idLectura        Int       @id @default(autoincrement())
-  idMedidor        Int
-  lecturaActual    Decimal   @default(0)
-  lecturaAnterior  Decimal   @default(0)
-  consumo          Decimal   @default(0)
-  fechaLectura     DateTime   @default(now())
-  observaciones      String?
-  estado           EstadoLectura @default(PENDIENTE)
+  idLectura       Int           @id @default(autoincrement())
+  idMedidor       Int
+  lecturaActual   Decimal       @default(0)
+  lecturaAnterior Decimal       @default(0)
+  consumo         Decimal       @default(0)
+  fechaLectura    DateTime      @default(now())
+  observaciones   String?
+  estado          EstadoLectura @default(PENDIENTE)
 
-  medidor          Medidor    @relation(fields: [idMedidor], references: [idMedidor])
-  comprobante      Comprobante?
+  medidor     Medidor      @relation(fields: [idMedidor], references: [idMedidor])
+  comprobante Comprobante?
 }
 
 model Comprobante {
-  idComprobante   Int       @id @default(autoincrement())
-  idLectura       Int       @unique
-  idOperador       Int
-  idPago          Int?
-  fechaEmision    DateTime  @default(now())
-  montoBasico     Decimal
-  montoAdicional  Decimal
-  moraAcumulada   Decimal   @default(0)
-  totalPagar      Decimal
-  estadoPago      EstadoPago @default(PENDIENTE)
-  fechaLimite     DateTime
+  idComprobante  Int        @id @default(autoincrement())
+  idLectura      Int        @unique
+  idOperador     Int
+  idPago         Int?
+  fechaEmision   DateTime   @default(now())
+  montoBasico    Decimal
+  montoAdicional Decimal
+  moraAcumulada  Decimal    @default(0)
+  totalPagar     Decimal
+  estadoPago     EstadoPago @default(PENDIENTE)
+  fechaLimite    DateTime
 
-  lectura         Lectura   @relation(fields: [idLectura], references: [idLectura])
-  usuario         Usuario   @relation(fields: [idOperador], references: [idUsuario])
-  pago            Pago?     @relation(fields: [idPago], references: [idPago])
+  lectura Lectura @relation(fields: [idLectura], references: [idLectura])
+  usuario Usuario @relation(fields: [idOperador], references: [idUsuario])
+  pago    Pago?   @relation(fields: [idPago], references: [idPago])
 }
 
 model Pago {
-  idPago        Int       @id @default(autoincrement())
-  idCajero      Int
-  montoPagado   Decimal
-  fechaPago     DateTime  @default(now())  
-  comprobanteArchivo String? 
+  idPago             Int      @id @default(autoincrement())
+  idCajero           Int
+  montoPagado        Decimal
+  fechaPago          DateTime @default(now())
+  comprobanteArchivo String?
 
-  cajero        Usuario   @relation(fields: [idCajero], references: [idUsuario])
-  comprobantes   Comprobante[]
+  cajero       Usuario       @relation(fields: [idCajero], references: [idUsuario])
+  comprobantes Comprobante[]
 }
 
 model Figura {
-  idFigura   Int      @id @default(autoincrement())
-  nombre     String
-  tipo       String
-  geojson    Json
+  idFigura Int    @id @default(autoincrement())
+  nombre   String
+  tipo     String
+  geojson  Json
 }
 
 enum EstadoAsistencia {
