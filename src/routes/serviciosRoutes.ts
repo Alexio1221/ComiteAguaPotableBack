@@ -3,7 +3,7 @@ import { registrarCategoria, obtenerCategorias, editarCategoria, eliminarCategor
 import { obtenerMedidoresLectura, registrarLectura, crearLecturasPendientes } from '../controllers/operador/lecturasController'
 import { obtenerComprobantesSocio } from '../controllers/cajero/comprobantesController';
 import { registrarPago, obtenerHistorialPagos, generarReportePago } from '../controllers/cajero/pagosController';
-import { obtenerTarifasReuniones } from '../controllers/ReunionesAvisosNoticias/tarifaReunionController';
+import { obtenerTarifasReuniones, crearTarifaReunion, actualizarTarifaReunion, eliminarTarifaReunion} from '../controllers/ReunionesAvisosNoticias/tarifaReunionController';
 import { autenticar } from '../middlewar/autenticacion';
 
 
@@ -29,4 +29,8 @@ router.post('/pagos-reporte', generarReportePago)  //Genera un archivo pdf para 
 
 //Tarifas Reunion
 router.get('/tarifas-reunion', autenticar, obtenerTarifasReuniones)  //obtiene todas las tarifas con sus datos para las reuniones
+router.post('/tarifa', autenticar, crearTarifaReunion)
+router.put('/tarifa/:id', autenticar, actualizarTarifaReunion)
+router.delete('/tarifa/:id', autenticar, eliminarTarifaReunion)
+
 export default router;

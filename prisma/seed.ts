@@ -99,7 +99,7 @@ async function main() {
       { idRol: 1, nombreFuncion: "Asambleas", icono: "ClipboardList" },
       { idRol: 1, nombreFuncion: "Usuarios", icono: "Users" },
       { idRol: 1, nombreFuncion: "Medidores", icono: "Gauge" },
-      { idRol: 1, nombreFuncion: "Categorias", icono: "ChartSpline" },
+      { idRol: 1, nombreFuncion: "Tarifas", icono: "ChartSpline" },
       { idRol: 1, nombreFuncion: "Reportes", icono: "BarChart" },
       { idRol: 1, nombreFuncion: "Avisos", icono: "Bell" },
       { idRol: 1, nombreFuncion: "Mapa", icono: "Map" },

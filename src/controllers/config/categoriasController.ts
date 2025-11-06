@@ -38,7 +38,11 @@ export const registrarCategoria = async (req: Request, res: Response) => {
 // Obtener todas las categorías
 export const obtenerCategorias = async (_req: Request, res: Response) => {
   try {
-    const categorias = await prisma.categoria.findMany()
+    const categorias = await prisma.categoria.findMany({
+      orderBy: {
+        idCategoria: 'asc',
+      }
+    })
 
     const categoriasFormateadas = categorias.map((cat) => ({
       ...cat,
@@ -111,6 +115,12 @@ export const eliminarCategoria = async (req: Request, res: Response) => {
     console.error('Error al eliminar la categoría:', error)
     if (error.code === 'P2025') {
       res.status(404).json({ mensaje: 'Categoría no encontrada' })
+      return
+    }
+    if (error.code === 'P2003') {
+      res.status(400).json({
+        mensaje: 'No se puede eliminar esta categoria porque está asociada a una reunión existente.',
+      })
       return
     }
     res.status(500).json({ mensaje: 'Error al eliminar la categoría' })
