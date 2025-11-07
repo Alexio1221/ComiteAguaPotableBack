@@ -28,6 +28,7 @@ model Usuario {
   comprobabantes Comprobante[]
   pagos          Pago[]
   pagosReunion   PagoReunion[]
+  reclamos       Reclamo[]
 }
 
 model Rol {
@@ -222,6 +223,28 @@ model Figura {
   tipo     String
   geojson  Json
 }
+
+model Reclamo {
+  idReclamo            Int         @id @default(autoincrement())
+  motivo             String
+  descripcion        String
+  imagenURL          String? // foto opcional
+  estado             EstadoReclamo @default(PENDIENTE)
+  fechaCreacion      DateTime    @default(now())
+  fechaActualizacion DateTime    @updatedAt
+
+  // Relación con socio (quien realiza la queja)
+  socio   Usuario? @relation(fields: [idSocio], references: [idUsuario])
+  idSocio Int?
+}
+
+enum EstadoReclamo {
+  PENDIENTE
+  EN_PROCESO
+  RESUELTO
+  RECHAZADO
+}
+
 
 enum EstadoAsistencia {
   PRESENTE
