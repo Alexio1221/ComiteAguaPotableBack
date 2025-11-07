@@ -106,6 +106,7 @@ async function main() {
 
       { idRol: 2, nombreFuncion: "Cobros", icono: "DollarSign" },
       { idRol: 2, nombreFuncion: "Comprobantes", icono: "FileText" },
+      { idRol: 2, nombreFuncion: "Asistencias", icono: "UserRoundCheck" },
       { idRol: 2, nombreFuncion: "Consumo", icono: "Droplet" },
       { idRol: 2, nombreFuncion: "Avisos", icono: "Bell" },
 

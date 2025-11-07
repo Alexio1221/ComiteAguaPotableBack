@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 // Ejecutar cada medianoche
 cron.schedule("0 0 * * *", async () => {
-  console.log("⏰ Ejecutando cron job de pagos automáticos...");
+  console.log("Ejecutando cron job de pagos automáticos...");
 
   try {
     // Buscar reuniones finalizadas
@@ -20,7 +20,7 @@ cron.schedule("0 0 * * *", async () => {
         where: {
           idReunion: reunion.idReunion,
           estado: "AUSENTE",
-          pagos: { none: {} }, // 👈 no tienen ningún PagoReunion asociado
+          pagos: { none: {} }, // no tienen ningún PagoReunion asociado
         },
         select: {
           idReunion: true,
@@ -36,14 +36,14 @@ cron.schedule("0 0 * * *", async () => {
             idCajero: 1, // o null si no hay cajero asignado
             estado: false,
           })),
-          skipDuplicates: true, // 👈 seguridad adicional
+          skipDuplicates: true, //  seguridad adicional
         });
-        console.log(`💰 Pagos creados para reunión ${reunion.idReunion}: ${ausentes.length}`);
+        console.log(` Pagos creados para reunión ${reunion.idReunion}: ${ausentes.length}`);
       }
     }
 
-    console.log("✅ Cron job completado sin errores.");
+    console.log("Cron job completado sin errores.");
   } catch (error) {
-    console.error("❌ Error en cron job:", error);
+    console.error("Error en cron job:", error);
   }
 });

@@ -1,10 +1,13 @@
 import { Request, Response } from 'express';
 import prisma from '../../config/client';
+import { RequestConUsuario } from '../../middlewar/autenticacion';
 
-export const registrarAsistencia = async (req: Request, res: Response) => {
+
+export const registrarAsistencia = async (req: RequestConUsuario, res: Response) => {
     try {
+        const idCajero = req.user?.idUsuario   //el administrador sera como cajero en esta parte
         const { idReunion, idUsuario, estado, observacion, cambioTabla } = req.body;
-
+        console.log(req.body)
         if (!idReunion || !idUsuario || !estado) {
             res.status(400).json({ mensaje: 'Faltan datos requeridos' });
             return
@@ -53,10 +56,29 @@ export const registrarAsistencia = async (req: Request, res: Response) => {
             },
         });
 
+        if (estado === 'RETRASO') {
+            await prisma.pagoReunion.create({
+                data: {
+                    idUsuario: Number(idUsuario),
+                    idReunion: Number(idReunion),
+                    idCajero: Number(idCajero),
+                    estado: true,
+                    fechaPago: new Date(),
+                }
+            })
+        } else {
+            await prisma.pagoReunion.deleteMany({
+                where: {
+                    idUsuario: Number(idUsuario),
+                    idReunion: Number(idReunion),
+                },
+            });
+        }
+
         res.json({ mensaje: mensajeUsuario });
     } catch (error: any) {
         if (error.name === "PrismaClientValidationError") {
-            res.status(404).json({ mensaje: 'El codigo qr no es correcto.' });
+            res.status(404).json({ mensaje: 'Tipos de datos incorrecto.' });
             return
         }
         if (error.code === 'P2025') {

@@ -4,6 +4,7 @@ import {cargarAvisosNoticias, cargarDocumentosAsamblea } from '../middlewar/carg
 import { crearReunion, obtenerReunionesVigentes, eliminarReunion, obtenerReunionesHoy, actualizarEstadoReunion } from '../controllers/ReunionesAvisosNoticias/reunionesController'
 import { registrarAsistencia, generarRegistrosAsistencia, obtenerListaDeSocios } from '../controllers/usuarios/asistenciaController';
 import { obtenerHistorialReuniones } from '../controllers/ReunionesAvisosNoticias/reunionSocioController';
+import { obtenerPagosReunion, registrarPagoReunion } from '../controllers/cajero/pagosReunionController';
 import { autenticar } from '../middlewar/autenticacion';
 
 const router = Router()
@@ -23,8 +24,16 @@ router.put('/reuniones/:idReunion/estado', actualizarEstadoReunion);  // Actuali
 router.delete('/reunion/:id', eliminarReunion)        // Eliminar reunión por ID
 
 //asistencia reuniones usuario
-router.post('/asistencia/registrar', registrarAsistencia);  //Registramos la asistencia de cada socio
-router.post('/asistencia/generar', generarRegistrosAsistencia);  //Generamos los registros con la reunion en proceso
-router.get('/asistencia/datos', obtenerListaDeSocios);   //Obtenemos la lista de los socios de la reunion actual
+router.post('/asistencia/registrar', autenticar, registrarAsistencia);  //Registramos la asistencia de cada socio
+router.post('/asistencia/generar', autenticar, generarRegistrosAsistencia);  //Generamos los registros con la reunion en proceso
+router.get('/asistencia/datos', autenticar ,obtenerListaDeSocios);   //Obtenemos la lista de los socios de la reunion actual
+
+//Reuniones Cajero
+// Obtener todos los pagos pendientes o historial
+router.get('/cajero/pagos-reunion', autenticar, obtenerPagosReunion)
+
+// Registrar pago
+router.put('/cajero/pago-reunion/:id', autenticar, registrarPagoReunion)
+
 
 export default router

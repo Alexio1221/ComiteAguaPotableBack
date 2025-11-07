@@ -4,6 +4,7 @@ import { obtenerMedidoresLectura, registrarLectura, crearLecturasPendientes } fr
 import { obtenerComprobantesSocio } from '../controllers/cajero/comprobantesController';
 import { registrarPago, obtenerHistorialPagos, generarReportePago } from '../controllers/cajero/pagosController';
 import { obtenerTarifasReuniones, crearTarifaReunion, actualizarTarifaReunion, eliminarTarifaReunion} from '../controllers/ReunionesAvisosNoticias/tarifaReunionController';
+import { generarReportePagosAsistencia } from '../controllers/cajero/pagosAsistenciaController';
 import { autenticar } from '../middlewar/autenticacion';
 
 
@@ -24,7 +25,10 @@ router.post('/lecturas', autenticar, registrarLectura)  //Registra una nueva lec
 router.get('/comprobantes/:idUsuario', autenticar, obtenerComprobantesSocio);  //Obtiene los comprobantes por socio
 router.get('/historial-pagos', obtenerHistorialPagos);  //Se usa para que el cajero obtenga el historial de pagos
 router.post('/pagos', autenticar, registrarPago);
-router.post('/pagos-reporte', generarReportePago)  //Genera un archivo pdf para enviarlo al frontend
+
+//Reportes
+router.post('/pagos-reporte', generarReportePago)  //Genera un archivo pdf para enviarlo al frontend reporte de comprobantes
+router.post('/pagos-asistencia', generarReportePagosAsistencia)   //Reportes de asistencias
 
 
 //Tarifas Reunion
