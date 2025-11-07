@@ -5,6 +5,7 @@ import { obtenerComprobantesSocio } from '../controllers/cajero/comprobantesCont
 import { registrarPago, obtenerHistorialPagos, generarReportePago } from '../controllers/cajero/pagosController';
 import { obtenerTarifasReuniones, crearTarifaReunion, actualizarTarifaReunion, eliminarTarifaReunion} from '../controllers/ReunionesAvisosNoticias/tarifaReunionController';
 import { generarReportePagosAsistencia } from '../controllers/cajero/pagosAsistenciaController';
+import { obtenerHistorialLecturas } from '../controllers/operador/historialController';
 import { autenticar } from '../middlewar/autenticacion';
 
 
@@ -19,7 +20,7 @@ router.delete('/categoria/:id', eliminarCategoria)  //Elimina la categoria por e
 //Lecturas Operador
 router.get('/medidores', crearLecturasPendientes, obtenerMedidoresLectura) //Se usa para obtener los medidores activos para su lectura
 router.post('/lecturas', autenticar, registrarLectura)  //Registra una nueva lectura y crea el comprobante asociado
-
+router.get('/lecturas/historial', autenticar, obtenerHistorialLecturas)             //Historial de lecturas
 
 //Comprobantes Cajero
 router.get('/comprobantes/:idUsuario', autenticar, obtenerComprobantesSocio);  //Obtiene los comprobantes por socio
