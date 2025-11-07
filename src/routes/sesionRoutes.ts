@@ -4,6 +4,7 @@ import { iniciarSesion } from '../controllers/usuarios/loginController';
 import { cerrarSesion } from '../controllers/usuarios/loginController';
 import { RequestConUsuario } from '../middlewar/autenticacion';
 import { obtenerDatosSocio } from '../controllers/usuarios/perfilController';
+import { obtenerDashboard } from '../controllers/usuarios/dashboardController';
 
 
 const router = Router();
@@ -17,5 +18,7 @@ router.get('/verificar-sesion', autenticar, (req: RequestConUsuario, res) => {
 });
 
 router.post('/perfil-socio', autenticar, obtenerDatosSocio)
+
+router.get('/dashboard/estadisticas', autenticar, obtenerDashboard)
 
 export default router;
