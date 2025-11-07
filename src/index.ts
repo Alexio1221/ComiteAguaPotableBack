@@ -12,6 +12,7 @@ import path from 'path'
 import { iniciarBot } from './bot';
 import './utils/cronJopCalcularMora';
 import './utils/cronJopActualizarReunion';
+import './utils/cronJopPagosReunion';
 
 dotenv.config();
 
