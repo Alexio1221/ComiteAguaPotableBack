@@ -8,7 +8,7 @@ export const obtenerFiguras = async (req: Request, res: Response) => {
         res.json(figuras);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Error al obtener las figuras" });
+        res.status(500).json({ error: "Error al obtener los objetos del agua potable" });
     }
 };
 
@@ -17,25 +17,19 @@ export const crearFigura = async (req: Request, res: Response) => {
     try {
         const { nombre, tipo, geojson } = req.body;
 
-        console.log(nombre, tipo, geojson)
-
         if (!nombre || !tipo || !geojson) {
             res.status(400).json({ error: "Faltan datos requeridos" });
             return
         }
 
-        console.log("Paso el primer if")
-
         const figura = await prisma.figura.create({
             data: { nombre, tipo, geojson },
         });
 
-        console.log("Paso el create", figura)
-
         res.status(201).json(figura);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Error al crear la figura" });
+        res.status(500).json({ error: "Error el objeto" });
     }
 };
 
@@ -53,7 +47,7 @@ export const actualizarFigura = async (req: Request, res: Response) => {
         res.json(figura);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Error al actualizar la figura" });
+        res.status(500).json({ error: "Error al actualizar la objeto" });
     }
 };
 
@@ -61,11 +55,10 @@ export const actualizarFigura = async (req: Request, res: Response) => {
 export const eliminarFigura = async (req: Request, res: Response) => {
     try {
         const { idFigura } = req.params;
-        console.log(idFigura)
         await prisma.figura.delete({ where: { idFigura: Number(idFigura) } });
-        res.json({ message: "Figura eliminada correctamente" });
+        res.json({ message: "Objeto eliminada correctamente" });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Error al eliminar la figura" });
+        res.status(500).json({ error: "Error al eliminar la objeto" });
     }
 };
